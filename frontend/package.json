@@ -1,0 +1,26 @@
+{
+  "name": "dose",
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "@tanstack/react-router": "^1.134.12",
+    "@tanstack/react-router-devtools": "^1.134.12"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "@types/node": "^24.10.0",
+    "@vitejs/plugin-react": "^5.1.0",
+    "@tanstack/router-plugin": "^1.134.12",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.12"
+  }
+}
+
