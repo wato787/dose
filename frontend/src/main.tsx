@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import { RouterProvider, createRouter as createTanStackRouter } from '@tanstack/react-router'
 import { routeTree } from './routeTree.gen'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
+import './index.css'
 
 // ルーターの作成関数
 export function createRouter() {
