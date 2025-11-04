@@ -74,7 +74,7 @@ bun run preview
 
 ## バックエンド
 
-Hono で構築されたバックエンドアプリケーションです。
+Hono + Drizzle ORM で構築されたバックエンドアプリケーションです。
 
 ### セットアップ
 
@@ -83,6 +83,42 @@ Hono で構築されたバックエンドアプリケーションです。
 ```bash
 cd backend
 bun install
+```
+
+### データベース
+
+#### マイグレーションの生成
+
+スキーマを変更した後、マイグレーションファイルを生成:
+
+```bash
+cd backend
+bun run db:generate
+```
+
+#### データベースへの適用
+
+マイグレーションをデータベースに適用:
+
+```bash
+cd backend
+bun run db:push
+```
+
+または、マイグレーションファイルを使用:
+
+```bash
+cd backend
+bun run db:migrate
+```
+
+#### Drizzle Studio
+
+データベースを可視化して確認:
+
+```bash
+cd backend
+bun run db:studio
 ```
 
 ### 開発
@@ -111,6 +147,18 @@ cd backend
 bun run typecheck
 ```
 
+### データベースアクセス
+
+Honoのcontextからデータベースにアクセスできます:
+
+```typescript
+app.get("/users", async (c) => {
+  const db = c.get("db");
+  const users = await db.select().from(usersTable).all();
+  return c.json(users);
+});
+```
+
 ## 技術スタック
 
 ### フロントエンド
@@ -123,6 +171,7 @@ bun run typecheck
 ### バックエンド
 
 - [Hono](https://hono.dev/) - 軽量かつ高速な Web フレームワーク
+- [Drizzle ORM](https://orm.drizzle.team/) - 軽量で型安全な ORM
 - [TypeScript](https://www.typescriptlang.org/) - 型安全性
 
 ### 共通

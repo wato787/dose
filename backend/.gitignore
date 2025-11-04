@@ -6,6 +6,13 @@ bun.lockb
 dist
 *.tsbuildinfo
 
+# Database
+*.db
+*.db-journal
+
+# Drizzle migrations
+drizzle/
+
 # Environment variables
 .env
 .env.local
