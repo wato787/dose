@@ -1,3 +1,2 @@
-// Middleware functions will be exported here
-export {};
+export { authMiddleware } from "./auth";
 
