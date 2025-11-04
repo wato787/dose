@@ -1,10 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { Home } from '@/views/Home'
 
 export const Route = createFileRoute('/')({
-  component: () => (
-    <div className="p-2">
-      <h3>Welcome Home!</h3>
-    </div>
-  ),
+  component: Home,
 })
 

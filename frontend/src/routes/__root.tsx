@@ -1,19 +1,17 @@
-import { Outlet, createRootRoute, Link } from '@tanstack/react-router'
+import { Outlet, createRootRoute } from '@tanstack/react-router'
+import { Header, Footer } from '@/components/layout'
+import { NotFound } from '@/views/NotFound'
 
 export const Route = createRootRoute({
   component: () => (
     <>
-      <div className="p-2 flex gap-2">
-        <Link to="/" className="[&.active]:font-bold">
-          Home
-        </Link>
-        <Link to="/about" className="[&.active]:font-bold">
-          About
-        </Link>
-      </div>
-      <hr />
-      <Outlet />
+      <Header />
+      <main className="min-h-screen">
+        <Outlet />
+      </main>
+      <Footer />
     </>
   ),
+  notFoundComponent: () => <NotFound />,
 })
 
