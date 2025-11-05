@@ -1,13 +1,11 @@
-"use client"
-
-import type React from "react"
-
 import { useState } from "react"
-import Link from "next/link"
-import { Eye, EyeOff } from "lucide-react"
+import { Link } from "@tanstack/react-router"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Button } from "@/components/ui/button"
+import { PasswordInput } from "@/components/PasswordInput"
 
-export default function LoginPage() {
-  const [showPassword, setShowPassword] = useState(false)
+export const Login = () => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -32,53 +30,33 @@ export default function LoginPage() {
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Email */}
           <div className="space-y-2">
-            <label htmlFor="email" className="text-sm font-medium text-foreground">
-              メールアドレス
-            </label>
-            <input
+            <Label htmlFor="email">メールアドレス</Label>
+            <Input
               id="email"
               type="email"
               placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-3 rounded-lg bg-card border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
             />
           </div>
 
           {/* Password */}
           <div className="space-y-2">
-            <label htmlFor="password" className="text-sm font-medium text-foreground">
-              パスワード
-            </label>
-            <div className="relative">
-              <input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="w-full px-4 py-3 rounded-lg bg-card border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-              >
-                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              </button>
-            </div>
+            <Label htmlFor="password">パスワード</Label>
+            <PasswordInput
+              id="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
           </div>
 
           {/* Submit */}
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full px-4 py-3 mt-6 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
+          <Button type="submit" disabled={isLoading} className="w-full mt-6">
             {isLoading ? "ログイン中..." : "ログイン"}
-          </button>
+          </Button>
         </form>
 
         {/* Divider */}
@@ -95,7 +73,7 @@ export default function LoginPage() {
         <div className="text-center">
           <p className="text-sm text-muted-foreground">
             アカウントをお持ちでないですか？{" "}
-            <Link href="/signup" className="font-medium text-primary hover:text-primary/90 transition-colors">
+            <Link to="/signup" className="font-medium text-primary hover:text-primary/90 transition-colors">
               サインアップ
             </Link>
           </p>
