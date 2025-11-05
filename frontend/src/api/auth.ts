@@ -35,3 +35,34 @@ export const signUp = async (data: SignUpRequest): Promise<SignUpResponse> => {
   return post<SignUpResponse>("/auth/sign-up/email", data)
 }
 
+/**
+ * ログインリクエスト
+ */
+export type SignInRequest = {
+  email: string
+  password: string
+  rememberMe?: boolean
+}
+
+/**
+ * ログインレスポンス
+ */
+export type SignInResponse = {
+  user: {
+    id: string
+    name: string
+    email: string
+  }
+  session: {
+    id: string
+    expiresAt: Date
+  }
+}
+
+/**
+ * ログイン
+ */
+export const signIn = async (data: SignInRequest): Promise<SignInResponse> => {
+  return post<SignInResponse>("/auth/sign-in/email", data)
+}
+

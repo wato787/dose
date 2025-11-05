@@ -1,23 +1,24 @@
 import { useState } from "react"
-import { Link, useNavigate } from "@tanstack/react-router"
+import { Link } from "@tanstack/react-router"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { PasswordInput } from "@/components/PasswordInput"
+import { useLogin } from "./useLogin"
 
 export const Login = () => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
 
+  const { mutate: login, isPending, error } = useLogin()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError(null)
-    setIsLoading(true)
 
-   
+    login({
+      email,
+      password,
+    })
   }
 
   return (
@@ -59,13 +60,13 @@ export const Login = () => {
           {/* Error Message */}
           {error && (
             <div className="text-sm text-destructive bg-destructive/10 p-3 rounded-md">
-              {error}
+              {error.message}
             </div>
           )}
 
           {/* Submit */}
-          <Button type="submit" disabled={isLoading} className="w-full mt-6">
-            {isLoading ? "ログイン中..." : "ログイン"}
+          <Button type="submit" disabled={isPending} className="w-full mt-6">
+            {isPending ? "ログイン中..." : "ログイン"}
           </Button>
         </form>
 
