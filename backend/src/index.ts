@@ -4,6 +4,7 @@ import { cors } from "hono/cors";
 import { prettyJSON } from "hono/pretty-json";
 import routes from "./routes";
 import { auth } from "./lib/auth";
+import { errorHandler } from "./middleware";
 
 const app = new Hono();
 
@@ -11,6 +12,7 @@ const app = new Hono();
 app.use("*", logger());
 app.use("*", cors());
 app.use("*", prettyJSON());
+app.use("*", errorHandler); // エラーハンドラーを最後に追加
 
 // better-auth routes
 app.all("/api/auth/*", async (c) => {

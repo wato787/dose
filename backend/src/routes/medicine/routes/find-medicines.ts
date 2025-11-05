@@ -1,6 +1,8 @@
 import { Hono } from "hono";
 import { findMedicineQuerySchema } from "../schema";
 import { medicineRepository } from "../../../repository/medicine-repository";
+import { BadRequestException, InternalServerErrorException } from "../../../utils/http-exception";
+import { ok } from "../../../utils/response";
 
 const router = new Hono();
 
@@ -18,9 +20,9 @@ router.get("/", async (c) => {
     const validatedQuery = findMedicineQuerySchema.safeParse(query);
 
     if (!validatedQuery.success) {
-      return c.json(
-        { error: "Invalid query parameters", details: validatedQuery.error.issues },
-        400
+      throw new BadRequestException(
+        "Invalid query parameters",
+        validatedQuery.error.issues
       );
     }
 
@@ -32,13 +34,13 @@ router.get("/", async (c) => {
       offset: validatedQuery.data.offset,
     });
 
-    return c.json({
-      data: medicines,
-      count: medicines.length,
-    });
+    return ok(c, { medicines, count: medicines.length });
   } catch (error) {
+    if (error instanceof BadRequestException || error instanceof InternalServerErrorException) {
+      throw error;
+    }
     console.error("Error fetching medicines:", error);
-    return c.json({ error: "Internal server error" }, 500);
+    throw new InternalServerErrorException();
   }
 });
 

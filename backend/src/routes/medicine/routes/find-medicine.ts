@@ -1,5 +1,7 @@
 import { Hono } from "hono";
 import { medicineRepository } from "../../../repository/medicine-repository";
+import { BadRequestException, NotFoundException, InternalServerErrorException } from "../../../utils/http-exception";
+import { ok } from "../../../utils/response";
 
 const router = new Hono();
 
@@ -14,7 +16,7 @@ router.get("/:id", async (c) => {
     const medicineId = parseInt(c.req.param("id"), 10);
 
     if (isNaN(medicineId)) {
-      return c.json({ error: "Invalid medicine ID" }, 400);
+      throw new BadRequestException("Invalid medicine ID");
     }
 
     // Repositoryを使ってデータベースから取得
@@ -24,13 +26,20 @@ router.get("/:id", async (c) => {
     });
 
     if (!result) {
-      return c.json({ error: "Medicine not found" }, 404);
+      throw new NotFoundException("Medicine not found");
     }
 
-    return c.json({ data: result });
+    return ok(c, result);
   } catch (error) {
+    if (
+      error instanceof BadRequestException ||
+      error instanceof NotFoundException ||
+      error instanceof InternalServerErrorException
+    ) {
+      throw error;
+    }
     console.error("Error fetching medicine:", error);
-    return c.json({ error: "Internal server error" }, 500);
+    throw new InternalServerErrorException();
   }
 });
 
