@@ -1,16 +1,20 @@
 import { useState } from "react"
-import { Link } from "@tanstack/react-router"
+import { Link, useNavigate } from "@tanstack/react-router"
 import { Check } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { PasswordInput } from "@/components/PasswordInput"
+import { authClient } from "@/lib/auth-client"
 
 export const SignUp = () => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
+  const [name, setName] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const navigate = useNavigate()
 
   const passwordsMatch = password === confirmPassword && password.length >= 8
   const hasUpperCase = /[A-Z]/.test(password)
@@ -21,9 +25,34 @@ export const SignUp = () => {
     e.preventDefault()
     if (!passwordsMatch) return
 
+    setError(null)
     setIsLoading(true)
-    // Registration logic here
-    setTimeout(() => setIsLoading(false), 1000)
+
+    try {
+      await authClient.signUp.email(
+        {
+          email,
+          password,
+          name: name || email.split("@")[0], // 名前がない場合はメールアドレスのユーザー名部分を使用
+        },
+        {
+          onRequest: () => {
+            setIsLoading(true)
+          },
+          onSuccess: () => {
+            setIsLoading(false)
+            navigate({ to: "/" })
+          },
+          onError: (ctx) => {
+            setIsLoading(false)
+            setError(ctx.error.message || "アカウント作成に失敗しました")
+          },
+        }
+      )
+    } catch (err) {
+      setIsLoading(false)
+      setError("予期しないエラーが発生しました")
+    }
   }
 
   return (
@@ -36,6 +65,18 @@ export const SignUp = () => {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Name */}
+          <div className="space-y-2">
+            <Label htmlFor="name">お名前</Label>
+            <Input
+              id="name"
+              type="text"
+              placeholder="山田太郎"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </div>
+
           {/* Email */}
           <div className="space-y-2">
             <Label htmlFor="email">メールアドレス</Label>
@@ -108,6 +149,13 @@ export const SignUp = () => {
             />
             {confirmPassword && !passwordsMatch && <p className="text-xs text-destructive">パスワードが一致しません</p>}
           </div>
+
+          {/* Error Message */}
+          {error && (
+            <div className="text-sm text-destructive bg-destructive/10 p-3 rounded-md">
+              {error}
+            </div>
+          )}
 
           {/* Submit */}
           <Button type="submit" disabled={isLoading || !passwordsMatch} className="w-full mt-6">
