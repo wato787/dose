@@ -12,6 +12,24 @@ export const findMedicineQuerySchema = z.object({
 });
 
 /**
+ * 薬の作成用リクエストボディスキーマ
+ */
+export const createMedicineSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  description: z.string().optional().nullable(),
+  isActive: z.boolean().optional().default(true),
+});
+
+/**
+ * 薬の更新用リクエストボディスキーマ
+ */
+export const updateMedicineSchema = z.object({
+  name: z.string().min(1, "Name is required").optional(),
+  description: z.string().optional().nullable(),
+  isActive: z.boolean().optional(),
+});
+
+/**
  * 薬のレスポンススキーマ
  */
 export const medicineResponseSchema = z.object({

@@ -1,6 +1,25 @@
 import { db } from "../db";
-import { medicine } from "../schema";
+import { medicine } from "../db/schema";
 import { eq, and, SQL } from "drizzle-orm";
+
+/**
+ * 薬の作成データ
+ */
+export interface CreateMedicineData {
+  userId: string;
+  name: string;
+  description?: string | null;
+  isActive?: boolean;
+}
+
+/**
+ * 薬の更新データ
+ */
+export interface UpdateMedicineData {
+  name?: string;
+  description?: string | null;
+  isActive?: boolean;
+}
 
 /**
  * 薬の取得条件
@@ -65,6 +84,76 @@ export const medicineRepository = {
       .limit(1);
 
     return result[0] ?? null;
+  },
+
+  /**
+   * 薬を作成
+   * @param data 作成データ
+   * @returns 作成された薬のオブジェクト
+   */
+  async create(data: CreateMedicineData) {
+    const result = await db
+      .insert(medicine)
+      .values({
+        userId: data.userId,
+        name: data.name,
+        description: data.description ?? null,
+        isActive: data.isActive ?? true,
+      })
+      .returning();
+
+    return result[0];
+  },
+
+  /**
+   * 薬を更新
+   * @param medicineId 薬のID
+   * @param userId ユーザーID
+   * @param data 更新データ
+   * @returns 更新された薬のオブジェクト、見つからない場合はnull
+   */
+  async update(
+    medicineId: number,
+    userId: string,
+    data: UpdateMedicineData
+  ) {
+    const updateData: Partial<typeof medicine.$inferInsert> = {};
+    if (data.name !== undefined) updateData.name = data.name;
+    if (data.description !== undefined) updateData.description = data.description;
+    if (data.isActive !== undefined) updateData.isActive = data.isActive;
+
+    const result = await db
+      .update(medicine)
+      .set(updateData)
+      .where(
+        and(
+          eq(medicine.medicineId, medicineId),
+          eq(medicine.userId, userId)
+        )
+      )
+      .returning();
+
+    return result[0] ?? null;
+  },
+
+  /**
+   * 薬を削除
+   * @param medicineId 薬のID
+   * @param userId ユーザーID
+   * @returns 削除されたかどうか
+   */
+  async delete(medicineId: number, userId: string) {
+    const result = await db
+      .delete(medicine)
+      .where(
+        and(
+          eq(medicine.medicineId, medicineId),
+          eq(medicine.userId, userId)
+        )
+      )
+      .returning();
+
+    return result.length > 0;
   },
 };
 
