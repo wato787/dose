@@ -1,17 +1,8 @@
 import { db } from "../db";
 import { medicine } from "../db/schema";
 import type { NewMedicine } from "../db/schema/medicine";
+import type { PaginationOptions } from "../types/pagination";
 import { eq, and, SQL } from "drizzle-orm";
-
-/**
- * 薬の取得条件
- */
-export interface FindMedicineOptions {
-  userId: string;
-  isActive?: boolean;
-  limit?: number;
-  offset?: number;
-}
 
 /**
  * 薬のIDとユーザーIDによる検索条件
@@ -28,22 +19,24 @@ export interface FindMedicineByIdOptions {
 export const medicineRepository = {
   /**
    * ユーザーの薬一覧を取得
-   * @param options 検索条件
+   * @param userId ユーザーID
+   * @param isActive アクティブな薬のみ取得するかどうか
+   * @param pagination ページネーションオプション
    * @returns 薬の配列
    */
-  async find(options: FindMedicineOptions) {
-    const conditions: SQL[] = [eq(medicine.userId, options.userId)];
+  async find(userId: string, isActive?: boolean, pagination?: PaginationOptions) {
+    const conditions: SQL[] = [eq(medicine.userId, userId)];
 
-    if (options.isActive !== undefined) {
-      conditions.push(eq(medicine.isActive, options.isActive));
+    if (isActive !== undefined) {
+      conditions.push(eq(medicine.isActive, isActive));
     }
 
     const result = await db
       .select()
       .from(medicine)
       .where(and(...conditions))
-      .limit(options.limit ?? 100)
-      .offset(options.offset ?? 0);
+      .limit(pagination?.limit ?? 100)
+      .offset(pagination?.offset ?? 0);
 
     return result;
   },

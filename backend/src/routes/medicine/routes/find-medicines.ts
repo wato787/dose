@@ -25,13 +25,15 @@ router.get("/", async (c) => {
       );
     }
 
-    // Repositoryを使ってデータベースから取得
-    const medicines = await medicineRepository.find({
-      userId,
-      isActive: validatedQuery.data.isActive,
+  // Repositoryを使ってデータベースから取得
+  const medicines = await medicineRepository.find(
+    userId,
+    validatedQuery.data.isActive,
+    {
       limit: validatedQuery.data.limit,
       offset: validatedQuery.data.offset,
-    });
+    }
+  );
 
   return ok(c, { medicines, count: medicines.length });
 });
