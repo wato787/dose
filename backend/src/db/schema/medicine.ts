@@ -14,3 +14,6 @@ export const medicine = sqliteTable("medicine", {
   registeredAt: integer("registered_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
 });
 
+export type Medicine = typeof medicine.$inferSelect;
+export type NewMedicine = typeof medicine.$inferInsert;
+

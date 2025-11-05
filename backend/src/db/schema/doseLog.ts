@@ -13,3 +13,5 @@ export const doseLog = sqliteTable("dose_log", {
   takenAt: integer("taken_at", { mode: "timestamp" }),
 });
 
+export type DoseLog = typeof doseLog.$inferSelect;
+export type NewDoseLog = typeof doseLog.$inferInsert;
