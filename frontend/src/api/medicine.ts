@@ -2,7 +2,7 @@
  * 薬関連のAPI関数
  */
 
-import { get, post, put, del } from "../api"
+import { get, post, put, del } from "../lib/api"
 import type { Medicine, NewMedicine } from "@/types/domain"
 
 /**

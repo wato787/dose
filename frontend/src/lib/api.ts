@@ -28,7 +28,14 @@ const fetchAPI = async <T>(endpoint: string, options?: RequestInit): Promise<T> 
   })
 
   if (!response.ok) {
+    // Better Auth のエラーレスポンスを処理
+    try {
+      const errorData = await response.json()
+      throw new Error(errorData.message || errorData.error || `API Error: ${response.statusText}`)
+    } catch {
+      // JSON パースに失敗した場合は通常のエラー
     throw new Error(`API Error: ${response.statusText}`)
+    }
   }
 
   return response.json()

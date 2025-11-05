@@ -4,44 +4,20 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { PasswordInput } from "@/components/PasswordInput"
-import { authClient } from "@/lib/auth-client"
 
 export const Login = () => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const navigate = useNavigate()
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
     setIsLoading(true)
 
-    try {
-      await authClient.signIn.email(
-        {
-          email,
-          password,
-        },
-        {
-          onRequest: () => {
-            setIsLoading(true)
-          },
-          onSuccess: () => {
-            setIsLoading(false)
-            navigate({ to: "/" })
-          },
-          onError: (ctx) => {
-            setIsLoading(false)
-            setError(ctx.error.message || "ログインに失敗しました")
-          },
-        }
-      )
-    } catch (err) {
-      setIsLoading(false)
-      setError("予期しないエラーが発生しました")
-    }
+   
   }
 
   return (

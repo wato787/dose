@@ -15,8 +15,8 @@ app.use("*", prettyJSON());
 app.use("*", errorHandler); // エラーハンドラーを最後に追加
 
 // better-auth routes
-app.all("/api/auth/*", async (c) => {
-  return await auth.handler(c.req.raw);
+app.on(["POST", "GET"], "/api/auth/*", (c) => {
+  return auth.handler(c.req.raw);
 });
 
 // Health check

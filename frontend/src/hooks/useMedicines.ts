@@ -3,7 +3,7 @@
  */
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { getMedicines, createMedicine, updateMedicine, deleteMedicine } from "@/lib/api/medicine"
+import { getMedicines, createMedicine, updateMedicine, deleteMedicine } from "@/api/medicine"
 import type { Medicine, NewMedicine } from "@/types/domain"
 
 /**

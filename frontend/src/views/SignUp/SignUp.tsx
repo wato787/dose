@@ -1,58 +1,34 @@
 import { useState } from "react"
-import { Link, useNavigate } from "@tanstack/react-router"
+import { Link } from "@tanstack/react-router"
 import { Check } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { PasswordInput } from "@/components/PasswordInput"
-import { authClient } from "@/lib/auth-client"
+import { useSignUp } from "./useSignUp"
 
 export const SignUp = () => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [name, setName] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const navigate = useNavigate()
 
   const passwordsMatch = password === confirmPassword && password.length >= 8
   const hasUpperCase = /[A-Z]/.test(password)
   const hasNumber = /[0-9]/.test(password)
   const hasMinLength = password.length >= 8
 
+  const {mutate:signup,isPending,error} = useSignUp()
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!passwordsMatch) return
 
-    setError(null)
-    setIsLoading(true)
-
-    try {
-      await authClient.signUp.email(
-        {
-          email,
-          password,
-          name: name || email.split("@")[0], // 名前がない場合はメールアドレスのユーザー名部分を使用
-        },
-        {
-          onRequest: () => {
-            setIsLoading(true)
-          },
-          onSuccess: () => {
-            setIsLoading(false)
-            navigate({ to: "/" })
-          },
-          onError: (ctx) => {
-            setIsLoading(false)
-            setError(ctx.error.message || "アカウント作成に失敗しました")
-          },
-        }
-      )
-    } catch (err) {
-      setIsLoading(false)
-      setError("予期しないエラーが発生しました")
-    }
+    signup({
+      name,
+      email,
+      password,
+    })
   }
 
   return (
@@ -153,13 +129,13 @@ export const SignUp = () => {
           {/* Error Message */}
           {error && (
             <div className="text-sm text-destructive bg-destructive/10 p-3 rounded-md">
-              {error}
+              {error.message}
             </div>
           )}
 
           {/* Submit */}
-          <Button type="submit" disabled={isLoading || !passwordsMatch} className="w-full mt-6">
-            {isLoading ? "アカウント作成中..." : "サインアップ"}
+          <Button type="submit" disabled={isPending || !passwordsMatch} className="w-full mt-6">
+            {isPending ? "アカウント作成中..." : "サインアップ"}
           </Button>
         </form>
 
