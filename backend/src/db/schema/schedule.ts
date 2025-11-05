@@ -13,3 +13,6 @@ export const schedule = sqliteTable("schedule", {
   startDate: integer("start_date", { mode: "timestamp" }).notNull(),
 });
 
+export type Schedule = typeof schedule.$inferSelect;
+export type NewSchedule = typeof schedule.$inferInsert;
+

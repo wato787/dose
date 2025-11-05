@@ -13,3 +13,6 @@ export const customItem = sqliteTable("custom_item", {
   isRequired: integer("is_required", { mode: "boolean" }).notNull().default(false),
 });
 
+export type CustomItem = typeof customItem.$inferSelect;
+export type NewCustomItem = typeof customItem.$inferInsert;
+
