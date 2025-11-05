@@ -44,8 +44,8 @@ if (!rootElement.innerHTML) {
   root.render(
     <StrictMode>
       <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
-        <TanStackRouterDevtools router={router} />
+      <RouterProvider router={router} />
+      <TanStackRouterDevtools router={router} />
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </StrictMode>
