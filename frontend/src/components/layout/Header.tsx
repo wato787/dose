@@ -1,4 +1,10 @@
+import { useSession, useSignOut } from "@/hooks/useSession"
+import { Button } from "@/components/ui/button"
+
 export const Header = () => {
+  const { data: session } = useSession()
+  const { mutate: signOut, isPending } = useSignOut()
+
   return (
     <header className="bg-card border-b border-border sticky top-0 z-40">
       <div className="px-4 py-4 flex items-center justify-between max-w-screen-md mx-auto">
@@ -8,8 +14,20 @@ export const Header = () => {
           </div>
           <h1 className="text-lg font-light text-foreground">Dose</h1>
         </div>
-        <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center cursor-pointer hover:bg-muted/80 transition-colors">
-          <span className="text-muted-foreground text-lg">⚙</span>
+        <div className="flex items-center gap-2">
+          {session?.user && (
+            <>
+              <span className="text-sm text-muted-foreground">{session.user.name}</span>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => signOut()}
+                disabled={isPending}
+              >
+                {isPending ? "ログアウト中..." : "ログアウト"}
+              </Button>
+            </>
+          )}
         </div>
       </div>
     </header>

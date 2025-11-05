@@ -20,6 +20,7 @@ const getAuthHeaders = (): HeadersInit => {
 const fetchAPI = async <T>(endpoint: string, options?: RequestInit): Promise<T> => {
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     ...options,
+    credentials: "include", // Better Auth はクッキーベースの認証を使用
     headers: {
       "Content-Type": "application/json",
       ...getAuthHeaders(),
