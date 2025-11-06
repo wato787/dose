@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { updateMedicineSchema } from "../schema";
-import { medicineRepository } from "../../../repository/medicine-repository";
+import { medicineRepository } from "../../../repository/medicine";
 import { BadRequestException, NotFoundException } from "../../../utils/http-exception";
 import { ok } from "../../../utils/response";
 
@@ -19,6 +19,12 @@ router.put("/:id", async (c) => {
     throw new BadRequestException("Invalid medicine ID");
   }
 
+  // 所有権を確認
+  const existing = await medicineRepository.findByIdAndUserId(userId, medicineId);
+  if (!existing) {
+    throw new NotFoundException("Medicine not found");
+  }
+
   // リクエストボディの取得とバリデーション
   const body = await c.req.json();
   const validatedBody = updateMedicineSchema.safeParse(body);
@@ -33,7 +39,6 @@ router.put("/:id", async (c) => {
   // Repositoryを使ってデータベースを更新
   const result = await medicineRepository.update(
     medicineId,
-    userId,
     {
       name: validatedBody.data.name,
       description: validatedBody.data.description,

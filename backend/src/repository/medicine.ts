@@ -2,15 +2,7 @@ import { db } from "../db";
 import { medicine } from "../db/schema";
 import type { NewMedicine } from "../db/schema/medicine";
 import type { PaginationOptions } from "../types/pagination";
-import { eq, and, SQL } from "drizzle-orm";
-
-/**
- * 薬のIDとユーザーIDによる検索条件
- */
-export interface FindMedicineByIdOptions {
-  userId: string;
-  medicineId: number;
-}
+import { eq, and } from "drizzle-orm";
 
 /**
  * Medicine Repository
@@ -20,21 +12,14 @@ export const medicineRepository = {
   /**
    * ユーザーの薬一覧を取得
    * @param userId ユーザーID
-   * @param isActive アクティブな薬のみ取得するかどうか
    * @param pagination ページネーションオプション
    * @returns 薬の配列
    */
-  async find(userId: string, isActive?: boolean, pagination?: PaginationOptions) {
-    const conditions: SQL[] = [eq(medicine.userId, userId)];
-
-    if (isActive !== undefined) {
-      conditions.push(eq(medicine.isActive, isActive));
-    }
-
+  async findByUserId(userId: string, pagination?: PaginationOptions) {
     const result = await db
       .select()
       .from(medicine)
-      .where(and(...conditions))
+      .where(eq(medicine.userId, userId))
       .limit(pagination?.limit ?? 100)
       .offset(pagination?.offset ?? 0);
 
@@ -42,18 +27,42 @@ export const medicineRepository = {
   },
 
   /**
-   * 特定の薬をIDで取得
-   * @param options 検索条件
-   * @returns 薬のオブジェクト、見つからない場合はnull
+   * ユーザーのアクティブな薬一覧を取得
+   * @param userId ユーザーID
+   * @param isActive アクティブな薬のみ取得するかどうか
+   * @param pagination ページネーションオプション
+   * @returns 薬の配列
    */
-  async findById(options: FindMedicineByIdOptions) {
+  async findByUserIdAndIsActive(userId: string, isActive: boolean, pagination?: PaginationOptions) {
     const result = await db
       .select()
       .from(medicine)
       .where(
         and(
-          eq(medicine.medicineId, options.medicineId),
-          eq(medicine.userId, options.userId)
+          eq(medicine.userId, userId),
+          eq(medicine.isActive, isActive)
+        )
+      )
+      .limit(pagination?.limit ?? 100)
+      .offset(pagination?.offset ?? 0);
+
+    return result;
+  },
+
+  /**
+   * 特定の薬をIDとユーザーIDで取得
+   * @param userId ユーザーID
+   * @param medicineId 薬のID
+   * @returns 薬のオブジェクト、見つからない場合はnull
+   */
+  async findByIdAndUserId(userId: string, medicineId: number) {
+    const result = await db
+      .select()
+      .from(medicine)
+      .where(
+        and(
+          eq(medicine.medicineId, medicineId),
+          eq(medicine.userId, userId)
         )
       )
       .limit(1);
@@ -83,24 +92,17 @@ export const medicineRepository = {
   /**
    * 薬を更新
    * @param medicineId 薬のID
-   * @param userId ユーザーID
    * @param data 更新データ
    * @returns 更新された薬のオブジェクト、見つからない場合はnull
    */
   async update(
     medicineId: number,
-    userId: string,
     data: Partial<Omit<NewMedicine, "medicineId" | "userId" | "registeredAt">>
   ) {
     const result = await db
       .update(medicine)
       .set(data)
-      .where(
-        and(
-          eq(medicine.medicineId, medicineId),
-          eq(medicine.userId, userId)
-        )
-      )
+      .where(eq(medicine.medicineId, medicineId))
       .returning();
 
     return result[0] ?? null;
@@ -109,18 +111,12 @@ export const medicineRepository = {
   /**
    * 薬を削除
    * @param medicineId 薬のID
-   * @param userId ユーザーID
    * @returns 削除されたかどうか
    */
-  async delete(medicineId: number, userId: string) {
+  async delete(medicineId: number) {
     const result = await db
       .delete(medicine)
-      .where(
-        and(
-          eq(medicine.medicineId, medicineId),
-          eq(medicine.userId, userId)
-        )
-      )
+      .where(eq(medicine.medicineId, medicineId))
       .returning();
 
     return result.length > 0;

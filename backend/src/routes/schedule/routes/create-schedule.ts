@@ -1,5 +1,6 @@
 import { Hono } from "hono";
-import { createMedicineSchema } from "../schema";
+import { createScheduleSchema } from "../schema";
+import { scheduleRepository } from "../../../repository/schedule";
 import { medicineRepository } from "../../../repository/medicine";
 import { BadRequestException } from "../../../utils/http-exception";
 import { created } from "../../../utils/response";
@@ -7,8 +8,8 @@ import { created } from "../../../utils/response";
 const router = new Hono();
 
 /**
- * POST /api/medicine
- * 新しい薬を作成
+ * POST /api/schedule
+ * 新しいスケジュールを作成
  */
 router.post("/", async (c) => {
   // ContextからユーザーIDを取得（middlewareで設定済み）
@@ -16,7 +17,7 @@ router.post("/", async (c) => {
 
   // リクエストボディの取得とバリデーション
   const body = await c.req.json();
-  const validatedBody = createMedicineSchema.safeParse(body);
+  const validatedBody = createScheduleSchema.safeParse(body);
 
   if (!validatedBody.success) {
     throw new BadRequestException(
@@ -25,12 +26,18 @@ router.post("/", async (c) => {
     );
   }
 
+  // medicineIdがユーザーのものであることを確認
+  const medicine = await medicineRepository.findByIdAndUserId(userId, validatedBody.data.medicineId);
+  if (!medicine) {
+    throw new BadRequestException("Medicine not found or access denied");
+  }
+
   // Repositoryを使ってデータベースに作成
-  const result = await medicineRepository.create({
-    userId,
-    name: validatedBody.data.name,
-    description: validatedBody.data.description ?? null,
-    isActive: validatedBody.data.isActive ?? true,
+  const result = await scheduleRepository.create({
+    medicineId: validatedBody.data.medicineId,
+    time: validatedBody.data.time,
+    frequencyType: validatedBody.data.frequencyType ?? "DAILY",
+    startDate: validatedBody.data.startDate,
   });
 
   return created(c, result);

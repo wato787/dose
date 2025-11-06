@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { findMedicineQuerySchema } from "../schema";
-import { medicineRepository } from "../../../repository/medicine-repository";
+import { medicineRepository } from "../../../repository/medicine";
 import { BadRequestException } from "../../../utils/http-exception";
 import { ok } from "../../../utils/response";
 
@@ -26,14 +26,22 @@ router.get("/", async (c) => {
     }
 
   // Repositoryを使ってデータベースから取得
-  const medicines = await medicineRepository.find(
-    userId,
-    validatedQuery.data.isActive,
-    {
-      limit: validatedQuery.data.limit,
-      offset: validatedQuery.data.offset,
-    }
-  );
+  const medicines = validatedQuery.data.isActive !== undefined
+    ? await medicineRepository.findByUserIdAndIsActive(
+        userId,
+        validatedQuery.data.isActive,
+        {
+          limit: validatedQuery.data.limit,
+          offset: validatedQuery.data.offset,
+        }
+      )
+    : await medicineRepository.findByUserId(
+        userId,
+        {
+          limit: validatedQuery.data.limit,
+          offset: validatedQuery.data.offset,
+        }
+      );
 
   return ok(c, { medicines, count: medicines.length });
 });
