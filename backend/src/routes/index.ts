@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import medicineRouter from "./medicine";
 import customItemRouter from "./custom-item";
+import customLogRouter from "./custom-log";
 import doseLogRouter from "./dose-log";
 import scheduleRouter from "./schedule";
 
@@ -16,6 +17,9 @@ router.route("/medicine", medicineRouter);
 
 // CustomItem routes
 router.route("/custom-item", customItemRouter);
+
+// CustomLog routes
+router.route("/custom-log", customLogRouter);
 
 // DoseLog routes
 router.route("/dose-log", doseLogRouter);
