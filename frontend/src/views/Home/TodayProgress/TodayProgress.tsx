@@ -1,10 +1,41 @@
 import { Card } from "@/components/ui/card"
+import { useDoseLogs } from "@/hooks/useDoseLogs"
+import { useSchedules } from "@/hooks/useSchedules"
+import { useMemo } from "react"
 
-interface TodayProgressProps {
-  completionRate: number
-}
+export const TodayProgress = () => {
+  const today = useMemo(() => {
+    const date = new Date()
+    date.setHours(0, 0, 0, 0)
+    return date
+  }, [])
 
-export const TodayProgress = ({ completionRate }: TodayProgressProps) => {
+  const { data: schedulesData } = useSchedules()
+  const schedules = schedulesData?.schedules || []
+
+  const { data: doseLogsData } = useDoseLogs()
+  const doseLogs = doseLogsData?.doseLogs || []
+
+  // 本日のスケジュールと服用ログを取得
+  const todaySchedules = schedules.filter((schedule) => {
+    const startDate = new Date(schedule.startDate)
+    startDate.setHours(0, 0, 0, 0)
+    return startDate <= today
+  })
+
+  const todayDoseLogs = doseLogs.filter((log) => {
+    const logDate = new Date(log.recordDate)
+    logDate.setHours(0, 0, 0, 0)
+    return logDate.getTime() === today.getTime()
+  })
+
+  // 進捗率を計算（本日のスケジュールのうち、服用済みの割合）
+  const completionRate = useMemo(() => {
+    if (todaySchedules.length === 0) return 0
+    const takenCount = todayDoseLogs.filter((log) => log.isTaken).length
+    return Math.round((takenCount / todaySchedules.length) * 100)
+  }, [todaySchedules.length, todayDoseLogs])
+
   return (
     <section className="px-4 py-6 space-y-4">
       <Card className="bg-gradient-to-br from-primary/5 to-secondary/5 border-primary/10 p-6">
