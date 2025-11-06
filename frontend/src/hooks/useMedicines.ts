@@ -3,16 +3,20 @@
  */
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { getMedicines, createMedicine, updateMedicine, deleteMedicine } from "@/api/medicine"
+import { getMedicines, getMedicine, createMedicine, updateMedicine, deleteMedicine } from "@/api/medicine"
 import type { Medicine, NewMedicine } from "@/types/domain"
 
 /**
  * 薬一覧を取得
  */
-export const useMedicines = () => {
+export const useMedicines = (params?: {
+  isActive?: boolean | string
+  limit?: number | string
+  offset?: number | string
+}) => {
   return useQuery({
-    queryKey: ["medicines"],
-    queryFn: getMedicines,
+    queryKey: ["medicines", params],
+    queryFn: () => getMedicines(params),
   })
 }
 
@@ -22,7 +26,7 @@ export const useMedicines = () => {
 export const useMedicine = (id: number | null) => {
   return useQuery({
     queryKey: ["medicine", id],
-    queryFn: () => getMedicines().then((medicines) => medicines.find((m) => m.medicineId === id)),
+    queryFn: () => getMedicine(id!),
     enabled: id !== null,
   })
 }
