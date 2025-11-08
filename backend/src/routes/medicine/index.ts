@@ -5,6 +5,7 @@ import findMedicineRouter from "./routes/find-medicine";
 import createMedicineRouter from "./routes/create-medicine";
 import updateMedicineRouter from "./routes/update-medicine";
 import deleteMedicineRouter from "./routes/delete-medicine";
+import customLogsRouter from "./routes/custom-logs";
 
 const router = new Hono();
 
@@ -17,6 +18,9 @@ router.route("/", findMedicineRouter); // 一件取得
 router.route("/", createMedicineRouter); // 作成
 router.route("/", updateMedicineRouter); // 更新
 router.route("/", deleteMedicineRouter); // 削除
+
+// カスタムログの操作（medicineに紐づく）
+router.route("/", customLogsRouter);
 
 export default router;
 

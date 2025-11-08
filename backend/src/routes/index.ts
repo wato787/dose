@@ -1,6 +1,5 @@
 import { Hono } from "hono";
 import medicineRouter from "./medicine";
-import customLogRouter from "./custom-log";
 import doseLogRouter from "./dose-log";
 
 const router = new Hono();
@@ -10,11 +9,8 @@ router.get("/", (c) => {
   return c.json({ message: "API routes" });
 });
 
-// Medicine routes (includes schedule and customItems - all operations)
+// Medicine routes (includes schedule, customItems, and customLogs - all operations)
 router.route("/medicine", medicineRouter);
-
-// CustomLog routes
-router.route("/custom-log", customLogRouter);
 
 // DoseLog routes
 router.route("/dose-log", doseLogRouter);

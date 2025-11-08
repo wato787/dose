@@ -2,13 +2,15 @@
  * カスタム項目関連のドメイン型定義
  */
 
+import type { CustomLog } from "./customLog"
+
 /**
  * カスタム項目のデータ型
  */
 export type CustomItemDataType = "BOOL" | "NUMBER" | "TEXT" | "RATING"
 
 /**
- * カスタムチェック項目設定型
+ * カスタムチェック項目設定型（カスタムログも含む）
  */
 export type CustomItem = {
   customItemId: number
@@ -16,6 +18,7 @@ export type CustomItem = {
   itemName: string
   dataType: CustomItemDataType
   isRequired: boolean
+  customLogs?: CustomLog[]
 }
 
 /**

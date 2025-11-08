@@ -92,3 +92,45 @@ export const deleteMedicine = async (id: number): Promise<void> => {
   await del<void>(`/medicine/${id}`)
 }
 
+/**
+ * カスタムログを作成（medicineに紐づく）
+ */
+export const createCustomLog = async (medicineId: number, data: {
+  customItemId: number
+  recordDate: Date
+  value: string
+}): Promise<{ customLogId: number; customItemId: number; recordDate: Date; value: string }> => {
+  const response = await post<{ data: { customLogId: number; customItemId: number; recordDate: Date; value: string } }>(
+    `/medicine/${medicineId}/custom-logs`,
+    {
+      ...data,
+      recordDate: data.recordDate.toISOString(),
+    }
+  )
+  return response.data
+}
+
+/**
+ * カスタムログを更新（medicineに紐づく）
+ */
+export const updateCustomLog = async (medicineId: number, customLogId: number, data: {
+  recordDate?: Date
+  value?: string
+}): Promise<{ customLogId: number; customItemId: number; recordDate: Date; value: string }> => {
+  const response = await put<{ data: { customLogId: number; customItemId: number; recordDate: Date; value: string } }>(
+    `/medicine/${medicineId}/custom-logs/${customLogId}`,
+    {
+      ...data,
+      recordDate: data.recordDate ? data.recordDate.toISOString() : undefined,
+    }
+  )
+  return response.data
+}
+
+/**
+ * カスタムログを削除（medicineに紐づく）
+ */
+export const deleteCustomLog = async (medicineId: number, customLogId: number): Promise<void> => {
+  await del<void>(`/medicine/${medicineId}/custom-logs/${customLogId}`)
+}
+

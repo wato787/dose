@@ -3,6 +3,7 @@ import { findMedicineQuerySchema } from "../schema";
 import { medicineRepository } from "../../../repository/medicine";
 import { scheduleRepository } from "../../../repository/schedule";
 import { customItemRepository } from "../../../repository/custom-item";
+import { customLogRepository } from "../../../repository/custom-log";
 import { BadRequestException } from "../../../utils/http-exception";
 import { ok } from "../../../utils/response";
 
@@ -45,15 +46,27 @@ router.get("/", async (c) => {
         }
       );
 
-  // 各薬のスケジュールとカスタムアイテムも取得
+  // 各薬のスケジュール、カスタムアイテム、カスタムログも取得
   const medicinesWithRelations = await Promise.all(
     medicines.map(async (medicine) => {
       const schedules = await scheduleRepository.findByMedicineId(userId, medicine.medicineId);
       const customItems = await customItemRepository.findByMedicineId(userId, medicine.medicineId);
+      
+      // 各カスタムアイテムのカスタムログも取得
+      const customItemsWithLogs = await Promise.all(
+        customItems.map(async (item) => {
+          const customLogs = await customLogRepository.findByCustomItemId(userId, item.customItemId);
+          return {
+            ...item,
+            customLogs,
+          };
+        })
+      );
+
       return {
         ...medicine,
         schedules,
-        customItems,
+        customItems: customItemsWithLogs,
       };
     })
   );

@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { medicineRepository } from "../../../repository/medicine";
 import { scheduleRepository } from "../../../repository/schedule";
 import { customItemRepository } from "../../../repository/custom-item";
+import { customLogRepository } from "../../../repository/custom-log";
 import { BadRequestException, NotFoundException } from "../../../utils/http-exception";
 import { ok } from "../../../utils/response";
 
@@ -9,7 +10,7 @@ const router = new Hono();
 
 /**
  * GET /api/medicine/:id
- * 特定の薬の詳細を取得（スケジュールとカスタムアイテムも含む）
+ * 特定の薬の詳細を取得（スケジュール、カスタムアイテム、カスタムログも含む）
  */
 router.get("/:id", async (c) => {
   // ContextからユーザーIDを取得（middlewareで設定済み）
@@ -31,10 +32,21 @@ router.get("/:id", async (c) => {
   const schedules = await scheduleRepository.findByMedicineId(userId, medicineId);
   const customItems = await customItemRepository.findByMedicineId(userId, medicineId);
 
+  // 各カスタムアイテムのカスタムログも取得
+  const customItemsWithLogs = await Promise.all(
+    customItems.map(async (item) => {
+      const customLogs = await customLogRepository.findByCustomItemId(userId, item.customItemId);
+      return {
+        ...item,
+        customLogs,
+      };
+    })
+  );
+
   return ok(c, {
     ...medicine,
     schedules,
-    customItems,
+    customItems: customItemsWithLogs,
   });
 });
 

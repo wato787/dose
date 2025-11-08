@@ -1,11 +1,13 @@
 import { CustomItem } from "../CustomItem"
 import { useMedicines } from "@/hooks/useMedicines"
-import { useCustomLogs, useCreateCustomLog, useUpdateCustomLog } from "@/hooks/useCustomLogs"
 import { useMemo } from "react"
+import { createCustomLog, updateCustomLog } from "@/api/medicine"
+import { useQueryClient } from "@tanstack/react-query"
 
 export const CustomItems = () => {
   const { data: medicinesData } = useMedicines({ isActive: true })
   const medicines = medicinesData?.medicines || []
+  const queryClient = useQueryClient()
 
   const today = useMemo(() => {
     const date = new Date()
@@ -31,42 +33,51 @@ export const CustomItems = () => {
 
   const customItems = todayMedicine?.customItems || []
 
-  const { data: customLogsData } = useCustomLogs()
-  const customLogs = customLogsData?.customLogs || []
-
-  const createCustomLog = useCreateCustomLog()
-  const updateCustomLog = useUpdateCustomLog()
-
-  // 本日のカスタムログを取得
+  // 本日のカスタムログを取得（各customItemのcustomLogsから）
   const todayCustomLogs = useMemo(() => {
-    return customLogs.filter((log) => {
-      const logDate = new Date(log.recordDate)
-      logDate.setHours(0, 0, 0, 0)
-      return logDate.getTime() === today.getTime()
+    if (!todayMedicine) return []
+    const allLogs: Array<{ customItemId: number; customLogId: number; value: string }> = []
+    customItems.forEach((item) => {
+      const logs = item.customLogs || []
+      logs.forEach((log) => {
+        const logDate = new Date(log.recordDate)
+        logDate.setHours(0, 0, 0, 0)
+        if (logDate.getTime() === today.getTime()) {
+          allLogs.push({
+            customItemId: item.customItemId,
+            customLogId: log.customLogId,
+            value: log.value,
+          })
+        }
+      })
     })
-  }, [customLogs, today])
+    return allLogs
+  }, [customItems, today])
 
   const handleToggle = async (customItemId: number) => {
+    if (!todayMedicine) return
+
     const existingLog = todayCustomLogs.find((log) => log.customItemId === customItemId)
     const currentValue = existingLog?.value === "true"
     const newValue = !currentValue
 
     if (existingLog) {
       // 既存のログを更新
-      await updateCustomLog.mutateAsync({
-        id: existingLog.customLogId,
-        data: {
-          value: String(newValue),
-        },
+      await updateCustomLog(todayMedicine.medicineId, existingLog.customLogId, {
+        value: String(newValue),
       })
     } else {
       // 新しいログを作成
-      await createCustomLog.mutateAsync({
+      await createCustomLog(todayMedicine.medicineId, {
         customItemId,
         recordDate: today,
         value: String(newValue),
       })
     }
+
+    // medicineのクエリを無効化して再取得
+    queryClient.invalidateQueries({ queryKey: ["medicines"] })
+    queryClient.invalidateQueries({ queryKey: ["medicine", todayMedicine.medicineId] })
   }
 
   if (customItems.length === 0) return null
