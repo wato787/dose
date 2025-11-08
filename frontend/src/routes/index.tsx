@@ -1,6 +1,6 @@
-import { createFileRoute, redirect } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import { Home } from '@/views/Home'
-import { getSession } from '@/api/auth'
+import { requireAuth } from '@/lib/auth-guard'
 import { queryClient } from '@/lib/query-client'
 import { getMedicines } from '@/api/medicine'
 import { getSchedules } from '@/api/schedule'
@@ -9,14 +9,7 @@ import { getCustomItems } from '@/api/custom-item'
 import { getCustomLogs } from '@/api/custom-log'
 
 export const Route = createFileRoute('/')({
-  beforeLoad: async () => {
-    const session = await getSession()
-    if (!session) {
-      throw redirect({
-        to: '/login',
-      })
-    }
-  },
+  beforeLoad: requireAuth,
   loader: async () => {
     // データを確保（キャッシュにあればそれを使用、なければフェッチ）
     await Promise.all([
