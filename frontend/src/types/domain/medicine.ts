@@ -2,8 +2,11 @@
  * 薬関連のドメイン型定義
  */
 
+import type { Schedule } from "./schedule"
+import type { CustomItem } from "./customItem"
+
 /**
- * 薬の基本情報型
+ * 薬の基本情報型（スケジュールとカスタムアイテムを含む）
  */
 export type Medicine = {
   medicineId: number
@@ -12,6 +15,8 @@ export type Medicine = {
   description: string | null
   isActive: boolean
   registeredAt: Date
+  schedules?: Schedule[]
+  customItems?: CustomItem[]
 }
 
 /**

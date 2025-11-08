@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card"
 import { useDoseLogs } from "@/hooks/useDoseLogs"
-import { useSchedules } from "@/hooks/useSchedules"
+import { useMedicines } from "@/hooks/useMedicines"
 import { useMemo } from "react"
 
 export const TodayProgress = () => {
@@ -10,14 +10,15 @@ export const TodayProgress = () => {
     return date
   }, [])
 
-  const { data: schedulesData } = useSchedules()
-  const schedules = schedulesData?.schedules || []
+  const { data: medicinesData } = useMedicines({ isActive: true })
+  const medicines = medicinesData?.medicines || []
 
   const { data: doseLogsData } = useDoseLogs()
   const doseLogs = doseLogsData?.doseLogs || []
 
   // 本日のスケジュールと服用ログを取得
-  const todaySchedules = schedules.filter((schedule) => {
+  const allSchedules = medicines.flatMap((m) => m.schedules || [])
+  const todaySchedules = allSchedules.filter((schedule) => {
     const startDate = new Date(schedule.startDate)
     startDate.setHours(0, 0, 0, 0)
     return startDate <= today

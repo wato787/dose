@@ -1,12 +1,11 @@
 import { CustomItem } from "../CustomItem"
-import { useCustomItems } from "@/hooks/useCustomItems"
+import { useMedicines } from "@/hooks/useMedicines"
 import { useCustomLogs, useCreateCustomLog, useUpdateCustomLog } from "@/hooks/useCustomLogs"
-import { useSchedules } from "@/hooks/useSchedules"
 import { useMemo } from "react"
 
 export const CustomItems = () => {
-  const { data: schedulesData } = useSchedules()
-  const schedules = schedulesData?.schedules || []
+  const { data: medicinesData } = useMedicines({ isActive: true })
+  const medicines = medicinesData?.medicines || []
 
   const today = useMemo(() => {
     const date = new Date()
@@ -14,9 +13,11 @@ export const CustomItems = () => {
     return date
   }, [])
 
-  // 本日の最初のスケジュールの薬IDを取得
-  const todayMedicineId = useMemo(() => {
-    const todaySchedule = schedules
+  // 本日の最初のスケジュールの薬を取得
+  const todayMedicine = useMemo(() => {
+    // 全スケジュールを取得
+    const allSchedules = medicines.flatMap((m) => m.schedules || [])
+    const todaySchedule = allSchedules
       .filter((schedule) => {
         const startDate = new Date(schedule.startDate)
         startDate.setHours(0, 0, 0, 0)
@@ -24,13 +25,11 @@ export const CustomItems = () => {
       })
       .sort((a, b) => a.time.localeCompare(b.time))[0]
 
-    return todaySchedule?.medicineId
-  }, [schedules, today])
+    if (!todaySchedule) return null
+    return medicines.find((m) => m.medicineId === todaySchedule.medicineId)
+  }, [medicines, today])
 
-  const { data: customItemsData } = useCustomItems(
-    todayMedicineId ? { medicineId: todayMedicineId } : undefined
-  )
-  const customItems = customItemsData?.customItems || []
+  const customItems = todayMedicine?.customItems || []
 
   const { data: customLogsData } = useCustomLogs()
   const customLogs = customLogsData?.customLogs || []

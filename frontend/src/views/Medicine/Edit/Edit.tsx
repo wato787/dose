@@ -1,13 +1,18 @@
 import type React from "react"
 import { useState, useEffect } from "react"
 import { useNavigate, useParams, Link } from "@tanstack/react-router"
-import { ChevronLeft, Pill, Clock, Calendar } from "lucide-react"
+import { ChevronLeft, Pill, Clock, Calendar, Plus, X } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useMedicine, useUpdateMedicine } from "@/hooks/useMedicines"
-import { useSchedules, useUpdateSchedule, useCreateSchedule } from "@/hooks/useSchedules"
-import type { FrequencyType } from "@/types/domain"
+import type { FrequencyType, CustomItemDataType } from "@/types/domain"
+
+type CustomItemForm = {
+  itemName: string
+  dataType: CustomItemDataType
+  isRequired: boolean
+}
 
 export const Edit = () => {
   const navigate = useNavigate()
@@ -15,13 +20,11 @@ export const Edit = () => {
   const medicineId = Number(id)
 
   const { data: medicine, isLoading: medicineLoading } = useMedicine(medicineId)
-  const { data: schedulesData } = useSchedules({ medicineId })
-  const schedules = schedulesData?.schedules || []
+  const schedules = medicine?.schedules || []
   const firstSchedule = schedules[0]
+  const existingCustomItems = medicine?.customItems || []
 
   const updateMedicine = useUpdateMedicine()
-  const updateSchedule = useUpdateSchedule()
-  const createSchedule = useCreateSchedule()
 
   const [formData, setFormData] = useState({
     name: "",
@@ -29,11 +32,12 @@ export const Edit = () => {
     time: "09:00",
     frequency_type: "DAILY" as FrequencyType,
     start_date: new Date().toISOString().split("T")[0],
+    customItems: [] as CustomItemForm[],
   })
 
   const [errors, setErrors] = useState<Record<string, string>>({})
 
-  // 薬とスケジュールのデータをフォームに設定
+  // 薬、スケジュール、カスタムアイテムのデータをフォームに設定
   useEffect(() => {
     if (medicine) {
       setFormData((prev) => ({
@@ -50,7 +54,17 @@ export const Edit = () => {
         start_date: new Date(firstSchedule.startDate).toISOString().split("T")[0],
       }))
     }
-  }, [medicine, firstSchedule])
+    if (existingCustomItems.length > 0) {
+      setFormData((prev) => ({
+        ...prev,
+        customItems: existingCustomItems.map((item) => ({
+          itemName: item.itemName,
+          dataType: item.dataType,
+          isRequired: item.isRequired,
+        })),
+      }))
+    }
+  }, [medicine, firstSchedule, existingCustomItems])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -91,42 +105,57 @@ export const Edit = () => {
     }
 
     try {
-      // 薬を更新
+      // 薬、スケジュール、カスタムアイテムを統合して更新
       await updateMedicine.mutateAsync({
         id: medicine.medicineId,
         data: {
           name: formData.name,
           description: formData.description || null,
-        },
-      })
-
-      // スケジュールを更新または作成
-      if (firstSchedule) {
-        // 既存のスケジュールを更新
-        await updateSchedule.mutateAsync({
-          id: firstSchedule.scheduleId,
-          data: {
+          schedule: {
             time: formData.time,
             frequencyType: formData.frequency_type,
             startDate: new Date(formData.start_date),
           },
-        })
-      } else {
-        // 新しいスケジュールを作成
-        await createSchedule.mutateAsync({
-          medicineId: medicine.medicineId,
-          time: formData.time,
-          frequencyType: formData.frequency_type,
-          startDate: new Date(formData.start_date),
-        })
-      }
+          customItems: formData.customItems.length > 0 ? formData.customItems : [],
+        },
+      })
 
-    // 成功後は一覧ページへリダイレクト
+      // 成功後は一覧ページへリダイレクト
       navigate({ to: "/medicine" as any })
     } catch (error) {
       console.error("Failed to update medicine:", error)
       // エラーハンドリングは必要に応じて追加
     }
+  }
+
+  const addCustomItem = () => {
+    setFormData((prev) => ({
+      ...prev,
+      customItems: [
+        ...prev.customItems,
+        {
+          itemName: "",
+          dataType: "BOOL" as CustomItemDataType,
+          isRequired: false,
+        },
+      ],
+    }))
+  }
+
+  const removeCustomItem = (index: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      customItems: prev.customItems.filter((_, i) => i !== index),
+    }))
+  }
+
+  const updateCustomItem = (index: number, field: keyof CustomItemForm, value: string | boolean) => {
+    setFormData((prev) => ({
+      ...prev,
+      customItems: prev.customItems.map((item, i) =>
+        i === index ? { ...item, [field]: value } : item
+      ),
+    }))
   }
 
   if (medicineLoading) {
@@ -248,27 +277,86 @@ export const Edit = () => {
             {errors.start_date && <p className="text-xs text-destructive">{errors.start_date}</p>}
           </div>
 
+          {/* Custom Items */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-medium text-foreground">カスタム記録項目（任意）</label>
+              <Button
+                type="button"
+                onClick={addCustomItem}
+                variant="outline"
+                size="sm"
+                className="h-8"
+              >
+                <Plus className="w-4 h-4 mr-1" />
+                追加
+              </Button>
+            </div>
+            {formData.customItems.map((item, index) => (
+              <Card key={index} className="p-4 space-y-3 bg-card border-border">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1 space-y-3">
+                    <div>
+                      <label className="text-xs text-muted-foreground">項目名</label>
+                      <Input
+                        type="text"
+                        value={item.itemName}
+                        onChange={(e) => updateCustomItem(index, "itemName", e.target.value)}
+                        placeholder="例: 出血、痛み"
+                        className="bg-card border-2 border-border mt-1"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs text-muted-foreground">データ型</label>
+                      <select
+                        value={item.dataType}
+                        onChange={(e) => updateCustomItem(index, "dataType", e.target.value as CustomItemDataType)}
+                        className="w-full px-3 py-2 bg-card border-2 border-border rounded-lg text-foreground focus:outline-none focus:border-primary transition-colors mt-1"
+                      >
+                        <option value="BOOL">はい/いいえ</option>
+                        <option value="NUMBER">数値</option>
+                        <option value="TEXT">テキスト</option>
+                        <option value="RATING">評価（1-5）</option>
+                      </select>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        id={`required-${index}`}
+                        checked={item.isRequired}
+                        onChange={(e) => updateCustomItem(index, "isRequired", e.target.checked)}
+                        className="w-4 h-4"
+                      />
+                      <label htmlFor={`required-${index}`} className="text-xs text-muted-foreground">
+                        必須項目
+                      </label>
+                    </div>
+                  </div>
+                  <Button
+                    type="button"
+                    onClick={() => removeCustomItem(index)}
+                    variant="ghost"
+                    size="sm"
+                    className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+              </Card>
+            ))}
+          </div>
+
           {/* Submit Button */}
           <div className="pt-4">
             <Button
               type="submit"
-              disabled={updateMedicine.isPending || updateSchedule.isPending || createSchedule.isPending}
+              disabled={updateMedicine.isPending}
               className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium py-3 rounded-lg transition-colors"
             >
-              {updateMedicine.isPending || updateSchedule.isPending || createSchedule.isPending
-                ? "保存中..."
-                : "変更を保存"}
+              {updateMedicine.isPending ? "保存中..." : "変更を保存"}
             </Button>
           </div>
         </form>
-
-        {/* Info Card */}
-        <Card className="bg-primary/5 border-primary/20 p-4 space-y-2">
-          <p className="text-xs font-medium text-foreground">💡 ヒント</p>
-          <p className="text-xs text-muted-foreground">
-            カスタム記録項目を追加・削除する場合は「設定」から変更できます。
-          </p>
-        </Card>
       </div>
     </main>
   )

@@ -1,6 +1,8 @@
 import { Hono } from "hono";
 import { findMedicineQuerySchema } from "../schema";
 import { medicineRepository } from "../../../repository/medicine";
+import { scheduleRepository } from "../../../repository/schedule";
+import { customItemRepository } from "../../../repository/custom-item";
 import { BadRequestException } from "../../../utils/http-exception";
 import { ok } from "../../../utils/response";
 
@@ -8,7 +10,7 @@ const router = new Hono();
 
 /**
  * GET /api/medicine
- * 認証されたユーザーの薬一覧を取得
+ * 認証されたユーザーの薬一覧を取得（スケジュールとカスタムアイテムも含む）
  */
 router.get("/", async (c) => {
     // ContextからユーザーIDを取得（middlewareで設定済み）
@@ -43,7 +45,20 @@ router.get("/", async (c) => {
         }
       );
 
-  return ok(c, { medicines, count: medicines.length });
+  // 各薬のスケジュールとカスタムアイテムも取得
+  const medicinesWithRelations = await Promise.all(
+    medicines.map(async (medicine) => {
+      const schedules = await scheduleRepository.findByMedicineId(userId, medicine.medicineId);
+      const customItems = await customItemRepository.findByMedicineId(userId, medicine.medicineId);
+      return {
+        ...medicine,
+        schedules,
+        customItems,
+      };
+    })
+  );
+
+  return ok(c, { medicines: medicinesWithRelations, count: medicinesWithRelations.length });
 });
 
 export default router;

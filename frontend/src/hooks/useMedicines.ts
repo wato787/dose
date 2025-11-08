@@ -4,7 +4,6 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { getMedicines, getMedicine, createMedicine, updateMedicine, deleteMedicine } from "@/api/medicine"
-import type { Medicine, NewMedicine } from "@/types/domain"
 
 /**
  * 薬一覧を取得
@@ -41,6 +40,8 @@ export const useCreateMedicine = () => {
     mutationFn: createMedicine,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["medicines"] })
+      queryClient.invalidateQueries({ queryKey: ["schedules"] })
+      queryClient.invalidateQueries({ queryKey: ["customItems"] })
     },
   })
 }
@@ -52,11 +53,13 @@ export const useUpdateMedicine = () => {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: Partial<NewMedicine> }) =>
+    mutationFn: ({ id, data }: { id: number; data: Parameters<typeof updateMedicine>[1] }) =>
       updateMedicine(id, data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["medicines"] })
       queryClient.invalidateQueries({ queryKey: ["medicine", variables.id] })
+      queryClient.invalidateQueries({ queryKey: ["schedules"] })
+      queryClient.invalidateQueries({ queryKey: ["customItems"] })
     },
   })
 }

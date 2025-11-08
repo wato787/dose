@@ -3,14 +3,11 @@ import { ChevronLeft, Pill, Edit2, Trash2, Plus, Clock } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { useMedicines, useDeleteMedicine } from "@/hooks/useMedicines"
-import { useSchedules } from "@/hooks/useSchedules"
 import type { FrequencyType } from "@/types/domain"
 
 export const Medicine = () => {
   const { data: medicinesData, isLoading: medicinesLoading } = useMedicines()
   const medicines = medicinesData?.medicines || []
-  const { data: schedulesData } = useSchedules()
-  const schedules = schedulesData?.schedules || []
   const deleteMedicine = useDeleteMedicine()
 
   const handleDelete = async (medicineId: number) => {
@@ -26,10 +23,6 @@ export const Medicine = () => {
       CUSTOM: "カスタム",
     }
     return labels[type] || type
-  }
-
-  const getMedicineSchedules = (medicineId: number) => {
-    return schedules.filter((schedule) => schedule.medicineId === medicineId)
   }
 
   if (medicinesLoading) {
@@ -78,7 +71,7 @@ export const Medicine = () => {
             {/* Medicines List */}
             <div className="space-y-3">
               {medicines.map((medicine) => {
-                const medicineSchedules = getMedicineSchedules(medicine.medicineId)
+                const medicineSchedules = medicine.schedules || []
                 return (
                   <Card key={medicine.medicineId} className="bg-card border-border p-4 space-y-3">
                     <div className="flex items-start justify-between">

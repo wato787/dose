@@ -1,16 +1,12 @@
 import { Pill } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { useMedicines } from "@/hooks/useMedicines"
-import { useSchedules } from "@/hooks/useSchedules"
 import { useDoseLogs, useCreateDoseLog, useUpdateDoseLog } from "@/hooks/useDoseLogs"
 import { useMemo } from "react"
 
 export const DoseRecord = () => {
   const { data: medicinesData } = useMedicines({ isActive: true })
   const medicines = medicinesData?.medicines || []
-
-  const { data: schedulesData } = useSchedules()
-  const schedules = schedulesData?.schedules || []
 
   const today = useMemo(() => {
     const date = new Date()
@@ -25,15 +21,16 @@ export const DoseRecord = () => {
   const updateDoseLog = useUpdateDoseLog()
 
   // 本日の最初のスケジュールとその薬、服用ログを取得
+  const allSchedules = medicines.flatMap((m) => m.schedules || [])
   const todaySchedule = useMemo(() => {
-    return schedules
+    return allSchedules
       .filter((schedule) => {
         const startDate = new Date(schedule.startDate)
         startDate.setHours(0, 0, 0, 0)
         return startDate <= today
       })
       .sort((a, b) => a.time.localeCompare(b.time))[0]
-  }, [schedules, today])
+  }, [allSchedules, today])
 
   const medicine = useMemo(() => {
     if (!todaySchedule) return null

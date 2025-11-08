@@ -4,7 +4,25 @@
 
 import { get, post, put, del } from "../lib/api"
 import { normalizeSearchParams } from "../lib/search-params"
-import type { Medicine, NewMedicine } from "@/types/domain"
+import type { Medicine, NewMedicine, FrequencyType, NewCustomItem } from "@/types/domain"
+
+type CreateMedicineRequest = Omit<NewMedicine, "userId"> & {
+  schedule?: {
+    time: string
+    frequencyType: FrequencyType
+    startDate: Date
+  }
+  customItems?: NewCustomItem[]
+}
+
+type UpdateMedicineRequest = Partial<Omit<NewMedicine, "userId">> & {
+  schedule?: {
+    time: string
+    frequencyType: FrequencyType
+    startDate: Date
+  } | null
+  customItems?: NewCustomItem[]
+}
 
 /**
  * 薬一覧を取得
@@ -40,18 +58,30 @@ export const getMedicine = async (id: number): Promise<Medicine> => {
 }
 
 /**
- * 薬を作成
+ * 薬を作成（スケジュールとカスタムアイテムも同時に作成可能）
  */
-export const createMedicine = async (data: Omit<NewMedicine, "userId">): Promise<Medicine> => {
-  const response = await post<{ data: Medicine }>("/medicine", data)
+export const createMedicine = async (data: CreateMedicineRequest): Promise<Medicine> => {
+  const response = await post<{ data: Medicine }>("/medicine", {
+    ...data,
+    schedule: data.schedule ? {
+      ...data.schedule,
+      startDate: data.schedule.startDate.toISOString(),
+    } : undefined,
+  })
   return response.data
 }
 
 /**
- * 薬を更新
+ * 薬を更新（スケジュールとカスタムアイテムも同時に更新可能）
  */
-export const updateMedicine = async (id: number, data: Partial<Omit<NewMedicine, "userId">>): Promise<Medicine> => {
-  const response = await put<{ data: Medicine }>(`/medicine/${id}`, data)
+export const updateMedicine = async (id: number, data: UpdateMedicineRequest): Promise<Medicine> => {
+  const response = await put<{ data: Medicine }>(`/medicine/${id}`, {
+    ...data,
+    schedule: data.schedule !== undefined ? (data.schedule ? {
+      ...data.schedule,
+      startDate: data.schedule.startDate instanceof Date ? data.schedule.startDate.toISOString() : data.schedule.startDate,
+    } : null) : undefined,
+  })
   return response.data
 }
 
