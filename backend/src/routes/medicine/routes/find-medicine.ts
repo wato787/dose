@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { db } from "../../../db";
 import { medicineRepository } from "../../../repository/medicine";
 import { scheduleRepository } from "../../../repository/schedule";
 import { customItemRepository } from "../../../repository/custom-item";
@@ -22,20 +23,20 @@ router.get("/:id", async (c) => {
   }
 
   // Repositoryを使ってデータベースから取得
-  const medicine = await medicineRepository.findByIdAndUserId(userId, medicineId);
+  const medicine = await medicineRepository.findByIdAndUserId(db, userId, medicineId);
 
   if (!medicine) {
     throw new NotFoundException("Medicine not found");
   }
 
   // スケジュールとカスタムアイテムも取得
-  const schedules = await scheduleRepository.findByMedicineId(userId, medicineId);
-  const customItems = await customItemRepository.findByMedicineId(userId, medicineId);
+  const schedules = await scheduleRepository.findByMedicineId(db, userId, medicineId);
+  const customItems = await customItemRepository.findByMedicineId(db, userId, medicineId);
 
   // 各カスタムアイテムのカスタムログも取得
   const customItemsWithLogs = await Promise.all(
     customItems.map(async (item) => {
-      const customLogs = await customLogRepository.findByCustomItemId(userId, item.customItemId);
+      const customLogs = await customLogRepository.findByCustomItemId(db, userId, item.customItemId);
       return {
         ...item,
         customLogs,

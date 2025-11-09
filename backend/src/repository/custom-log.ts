@@ -1,8 +1,8 @@
-import { db } from "../db";
 import { customLog, customItem, medicine } from "../db/schema";
 import type { NewCustomLog } from "../db/schema/customLog";
 import type { PaginationOptions } from "../types/pagination";
 import { eq, and, or, isNull } from "drizzle-orm";
+import type { DatabaseType } from "../db";
 
 /**
  * CustomLog Repository
@@ -11,11 +11,12 @@ import { eq, and, or, isNull } from "drizzle-orm";
 export const customLogRepository = {
   /**
    * ユーザーのカスタムログ一覧を取得
+   * @param db データベースオブジェクト
    * @param userId ユーザーID
    * @param pagination ページネーションオプション
    * @returns カスタムログの配列
    */
-  async findByUserId(userId: string, pagination?: PaginationOptions) {
+  async findByUserId(db: DatabaseType, userId: string, pagination?: PaginationOptions) {
     const result = await db
       .select({
         customLogId: customLog.customLogId,
@@ -40,12 +41,13 @@ export const customLogRepository = {
 
   /**
    * 特定のカスタム項目に紐づくカスタムログ一覧を取得
+   * @param db データベースオブジェクト
    * @param userId ユーザーID
    * @param customItemId カスタム項目ID
    * @param pagination ページネーションオプション
    * @returns カスタムログの配列
    */
-  async findByCustomItemId(userId: string, customItemId: number, pagination?: PaginationOptions) {
+  async findByCustomItemId(db: DatabaseType, userId: string, customItemId: number, pagination?: PaginationOptions) {
     const result = await db
       .select({
         customLogId: customLog.customLogId,
@@ -73,11 +75,12 @@ export const customLogRepository = {
 
   /**
    * 特定のカスタムログをIDとユーザーIDで取得
+   * @param db データベースオブジェクト
    * @param userId ユーザーID
    * @param customLogId カスタムログのID
    * @returns カスタムログのオブジェクト、見つからない場合はnull
    */
-  async findByIdAndUserId(userId: string, customLogId: number) {
+  async findByIdAndUserId(db: DatabaseType, userId: string, customLogId: number) {
     const result = await db
       .select({
         customLogId: customLog.customLogId,
@@ -104,10 +107,11 @@ export const customLogRepository = {
 
   /**
    * カスタムログを作成
+   * @param db データベースオブジェクト
    * @param data 作成データ
    * @returns 作成されたカスタムログのオブジェクト
    */
-  async create(data: Omit<NewCustomLog, "customLogId">) {
+  async create(db: DatabaseType, data: Omit<NewCustomLog, "customLogId">) {
     const result = await db
       .insert(customLog)
       .values({
@@ -122,11 +126,13 @@ export const customLogRepository = {
 
   /**
    * カスタムログを更新
+   * @param db データベースオブジェクト
    * @param customLogId カスタムログのID
    * @param data 更新データ
    * @returns 更新されたカスタムログのオブジェクト、見つからない場合はnull
    */
   async update(
+    db: DatabaseType,
     customLogId: number,
     data: Partial<Omit<NewCustomLog, "customLogId">>
   ) {
@@ -141,10 +147,11 @@ export const customLogRepository = {
 
   /**
    * カスタムログを削除
+   * @param db データベースオブジェクト
    * @param customLogId カスタムログのID
    * @returns 削除されたかどうか
    */
-  async delete(customLogId: number) {
+  async delete(db: DatabaseType, customLogId: number) {
     const result = await db
       .delete(customLog)
       .where(eq(customLog.customLogId, customLogId))
@@ -153,4 +160,3 @@ export const customLogRepository = {
     return result.length > 0;
   },
 };
-

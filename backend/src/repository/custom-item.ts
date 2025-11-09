@@ -1,8 +1,8 @@
-import { db } from "../db";
 import { customItem, medicine } from "../db/schema";
 import type { NewCustomItem } from "../db/schema/customItem";
 import type { PaginationOptions } from "../types/pagination";
 import { eq, and, isNull, or } from "drizzle-orm";
+import type { DatabaseType } from "../db";
 
 /**
  * CustomItem Repository
@@ -11,13 +11,12 @@ import { eq, and, isNull, or } from "drizzle-orm";
 export const customItemRepository = {
   /**
    * ユーザーのカスタム項目一覧を取得
+   * @param db データベースオブジェクト
    * @param userId ユーザーID
    * @param pagination ページネーションオプション
    * @returns カスタム項目の配列
    */
-  async findByUserId(userId: string, pagination?: PaginationOptions) {
-    // ユーザーの薬に紐づく項目または薬に紐づかない項目を取得
-    // 注: 薬に紐づかない項目は全ユーザー共通と仮定（必要に応じてuserIdフィールドを追加）
+  async findByUserId(db: DatabaseType, userId: string, pagination?: PaginationOptions) {
     const result = await db
       .select({
         customItemId: customItem.customItemId,
@@ -42,13 +41,13 @@ export const customItemRepository = {
 
   /**
    * 特定の薬に紐づくカスタム項目一覧を取得
+   * @param db データベースオブジェクト
    * @param userId ユーザーID
    * @param medicineId 薬ID
    * @param pagination ページネーションオプション
    * @returns カスタム項目の配列
    */
-  async findByMedicineId(userId: string, medicineId: number, pagination?: PaginationOptions) {
-    // その薬がユーザーのものであることを確認するためにJOINが必要
+  async findByMedicineId(db: DatabaseType, userId: string, medicineId: number, pagination?: PaginationOptions) {
     const result = await db
       .select({
         customItemId: customItem.customItemId,
@@ -73,11 +72,12 @@ export const customItemRepository = {
 
   /**
    * 特定のカスタム項目をIDとユーザーIDで取得
+   * @param db データベースオブジェクト
    * @param userId ユーザーID
    * @param customItemId カスタム項目のID
    * @returns カスタム項目のオブジェクト、見つからない場合はnull
    */
-  async findByIdAndUserId(userId: string, customItemId: number) {
+  async findByIdAndUserId(db: DatabaseType, userId: string, customItemId: number) {
     const result = await db
       .select({
         customItemId: customItem.customItemId,
@@ -104,10 +104,11 @@ export const customItemRepository = {
 
   /**
    * カスタム項目を作成
+   * @param db データベースオブジェクト
    * @param data 作成データ
    * @returns 作成されたカスタム項目のオブジェクト
    */
-  async create(data: Omit<NewCustomItem, "customItemId">) {
+  async create(db: DatabaseType, data: Omit<NewCustomItem, "customItemId">) {
     const result = await db
       .insert(customItem)
       .values({
@@ -123,11 +124,13 @@ export const customItemRepository = {
 
   /**
    * カスタム項目を更新
+   * @param db データベースオブジェクト
    * @param customItemId カスタム項目のID
    * @param data 更新データ
    * @returns 更新されたカスタム項目のオブジェクト、見つからない場合はnull
    */
   async update(
+    db: DatabaseType,
     customItemId: number,
     data: Partial<Omit<NewCustomItem, "customItemId">>
   ) {
@@ -142,10 +145,11 @@ export const customItemRepository = {
 
   /**
    * カスタム項目を削除
+   * @param db データベースオブジェクト
    * @param customItemId カスタム項目のID
    * @returns 削除されたかどうか
    */
-  async delete(customItemId: number) {
+  async delete(db: DatabaseType, customItemId: number) {
     const result = await db
       .delete(customItem)
       .where(eq(customItem.customItemId, customItemId))
@@ -154,4 +158,3 @@ export const customItemRepository = {
     return result.length > 0;
   },
 };
-

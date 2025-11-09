@@ -1,8 +1,8 @@
-import { db } from "../db";
 import { schedule, medicine } from "../db/schema";
 import type { NewSchedule } from "../db/schema/schedule";
 import type { PaginationOptions } from "../types/pagination";
 import { eq, and } from "drizzle-orm";
+import type { DatabaseType } from "../db";
 
 /**
  * Schedule Repository
@@ -11,11 +11,12 @@ import { eq, and } from "drizzle-orm";
 export const scheduleRepository = {
   /**
    * ユーザーのスケジュール一覧を取得
+   * @param db データベースオブジェクト
    * @param userId ユーザーID
    * @param pagination ページネーションオプション
    * @returns スケジュールの配列
    */
-  async findByUserId(userId: string, pagination?: PaginationOptions) {
+  async findByUserId(db: DatabaseType, userId: string, pagination?: PaginationOptions) {
     const result = await db
       .select({
         scheduleId: schedule.scheduleId,
@@ -35,12 +36,13 @@ export const scheduleRepository = {
 
   /**
    * 特定の薬に紐づくスケジュール一覧を取得
+   * @param db データベースオブジェクト
    * @param userId ユーザーID
    * @param medicineId 薬ID
    * @param pagination ページネーションオプション
    * @returns スケジュールの配列
    */
-  async findByMedicineId(userId: string, medicineId: number, pagination?: PaginationOptions) {
+  async findByMedicineId(db: DatabaseType, userId: string, medicineId: number, pagination?: PaginationOptions) {
     const result = await db
       .select({
         scheduleId: schedule.scheduleId,
@@ -65,11 +67,12 @@ export const scheduleRepository = {
 
   /**
    * 特定のスケジュールをIDとユーザーIDで取得
+   * @param db データベースオブジェクト
    * @param userId ユーザーID
    * @param scheduleId スケジュールのID
    * @returns スケジュールのオブジェクト、見つからない場合はnull
    */
-  async findByIdAndUserId(userId: string, scheduleId: number) {
+  async findByIdAndUserId(db: DatabaseType, userId: string, scheduleId: number) {
     const result = await db
       .select({
         scheduleId: schedule.scheduleId,
@@ -93,10 +96,11 @@ export const scheduleRepository = {
 
   /**
    * スケジュールを作成
+   * @param db データベースオブジェクト
    * @param data 作成データ
    * @returns 作成されたスケジュールのオブジェクト
    */
-  async create(data: Omit<NewSchedule, "scheduleId">) {
+  async create(db: DatabaseType, data: Omit<NewSchedule, "scheduleId">) {
     const result = await db
       .insert(schedule)
       .values({
@@ -112,11 +116,13 @@ export const scheduleRepository = {
 
   /**
    * スケジュールを更新
+   * @param db データベースオブジェクト
    * @param scheduleId スケジュールのID
    * @param data 更新データ
    * @returns 更新されたスケジュールのオブジェクト、見つからない場合はnull
    */
   async update(
+    db: DatabaseType,
     scheduleId: number,
     data: Partial<Omit<NewSchedule, "scheduleId">>
   ) {
@@ -131,10 +137,11 @@ export const scheduleRepository = {
 
   /**
    * スケジュールを削除
+   * @param db データベースオブジェクト
    * @param scheduleId スケジュールのID
    * @returns 削除されたかどうか
    */
-  async delete(scheduleId: number) {
+  async delete(db: DatabaseType, scheduleId: number) {
     const result = await db
       .delete(schedule)
       .where(eq(schedule.scheduleId, scheduleId))
@@ -143,4 +150,3 @@ export const scheduleRepository = {
     return result.length > 0;
   },
 };
-

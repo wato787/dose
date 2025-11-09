@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { db } from "../../../db";
 import { medicineRepository } from "../../../repository/medicine";
 import { BadRequestException, NotFoundException } from "../../../utils/http-exception";
 import { noContent } from "../../../utils/response";
@@ -19,13 +20,13 @@ router.delete("/:id", async (c) => {
   }
 
   // 所有権を確認
-  const existing = await medicineRepository.findByIdAndUserId(userId, medicineId);
+  const existing = await medicineRepository.findByIdAndUserId(db, userId, medicineId);
   if (!existing) {
     throw new NotFoundException("Medicine not found");
   }
 
   // Repositoryを使ってデータベースから削除
-  const deleted = await medicineRepository.delete(medicineId);
+  const deleted = await medicineRepository.delete(db, medicineId);
 
   if (!deleted) {
     throw new NotFoundException("Medicine not found");

@@ -1,8 +1,8 @@
-import { db } from "../db";
 import { medicine } from "../db/schema";
 import type { NewMedicine } from "../db/schema/medicine";
 import type { PaginationOptions } from "../types/pagination";
 import { eq, and } from "drizzle-orm";
+import type { DatabaseType } from "../db";
 
 /**
  * Medicine Repository
@@ -11,11 +11,12 @@ import { eq, and } from "drizzle-orm";
 export const medicineRepository = {
   /**
    * ユーザーの薬一覧を取得
+   * @param db データベースオブジェクト
    * @param userId ユーザーID
    * @param pagination ページネーションオプション
    * @returns 薬の配列
    */
-  async findByUserId(userId: string, pagination?: PaginationOptions) {
+  async findByUserId(db: DatabaseType, userId: string, pagination?: PaginationOptions) {
     const result = await db
       .select()
       .from(medicine)
@@ -28,12 +29,13 @@ export const medicineRepository = {
 
   /**
    * ユーザーのアクティブな薬一覧を取得
+   * @param db データベースオブジェクト
    * @param userId ユーザーID
    * @param isActive アクティブな薬のみ取得するかどうか
    * @param pagination ページネーションオプション
    * @returns 薬の配列
    */
-  async findByUserIdAndIsActive(userId: string, isActive: boolean, pagination?: PaginationOptions) {
+  async findByUserIdAndIsActive(db: DatabaseType, userId: string, isActive: boolean, pagination?: PaginationOptions) {
     const result = await db
       .select()
       .from(medicine)
@@ -51,11 +53,12 @@ export const medicineRepository = {
 
   /**
    * 特定の薬をIDとユーザーIDで取得
+   * @param db データベースオブジェクト
    * @param userId ユーザーID
    * @param medicineId 薬のID
    * @returns 薬のオブジェクト、見つからない場合はnull
    */
-  async findByIdAndUserId(userId: string, medicineId: number) {
+  async findByIdAndUserId(db: DatabaseType, userId: string, medicineId: number) {
     const result = await db
       .select()
       .from(medicine)
@@ -72,10 +75,11 @@ export const medicineRepository = {
 
   /**
    * 薬を作成
+   * @param db データベースオブジェクト
    * @param data 作成データ
    * @returns 作成された薬のオブジェクト
    */
-  async create(data: Omit<NewMedicine, "medicineId" | "registeredAt">) {
+  async create(db: DatabaseType, data: Omit<NewMedicine, "medicineId" | "registeredAt">) {
     const result = await db
       .insert(medicine)
       .values({
@@ -91,11 +95,13 @@ export const medicineRepository = {
 
   /**
    * 薬を更新
+   * @param db データベースオブジェクト
    * @param medicineId 薬のID
    * @param data 更新データ
    * @returns 更新された薬のオブジェクト、見つからない場合はnull
    */
   async update(
+    db: DatabaseType,
     medicineId: number,
     data: Partial<Omit<NewMedicine, "medicineId" | "userId" | "registeredAt">>
   ) {
@@ -110,10 +116,11 @@ export const medicineRepository = {
 
   /**
    * 薬を削除
+   * @param db データベースオブジェクト
    * @param medicineId 薬のID
    * @returns 削除されたかどうか
    */
-  async delete(medicineId: number) {
+  async delete(db: DatabaseType, medicineId: number) {
     const result = await db
       .delete(medicine)
       .where(eq(medicine.medicineId, medicineId))
@@ -122,4 +129,3 @@ export const medicineRepository = {
     return result.length > 0;
   },
 };
-

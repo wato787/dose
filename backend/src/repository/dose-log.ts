@@ -1,8 +1,8 @@
-import { db } from "../db";
 import { doseLog, schedule, medicine } from "../db/schema";
 import type { NewDoseLog } from "../db/schema/doseLog";
 import type { PaginationOptions } from "../types/pagination";
 import { eq, and } from "drizzle-orm";
+import type { DatabaseType } from "../db";
 
 /**
  * DoseLog Repository
@@ -11,11 +11,12 @@ import { eq, and } from "drizzle-orm";
 export const doseLogRepository = {
   /**
    * ユーザーの服用ログ一覧を取得
+   * @param db データベースオブジェクト
    * @param userId ユーザーID
    * @param pagination ページネーションオプション
    * @returns 服用ログの配列
    */
-  async findByUserId(userId: string, pagination?: PaginationOptions) {
+  async findByUserId(db: DatabaseType, userId: string, pagination?: PaginationOptions) {
     const result = await db
       .select({
         doseLogId: doseLog.doseLogId,
@@ -36,12 +37,13 @@ export const doseLogRepository = {
 
   /**
    * 特定のスケジュールに紐づく服用ログ一覧を取得
+   * @param db データベースオブジェクト
    * @param userId ユーザーID
    * @param scheduleId スケジュールID
    * @param pagination ページネーションオプション
    * @returns 服用ログの配列
    */
-  async findByScheduleId(userId: string, scheduleId: number, pagination?: PaginationOptions) {
+  async findByScheduleId(db: DatabaseType, userId: string, scheduleId: number, pagination?: PaginationOptions) {
     const result = await db
       .select({
         doseLogId: doseLog.doseLogId,
@@ -67,11 +69,12 @@ export const doseLogRepository = {
 
   /**
    * 特定の服用ログをIDとユーザーIDで取得
+   * @param db データベースオブジェクト
    * @param userId ユーザーID
    * @param doseLogId 服用ログのID
    * @returns 服用ログのオブジェクト、見つからない場合はnull
    */
-  async findByIdAndUserId(userId: string, doseLogId: number) {
+  async findByIdAndUserId(db: DatabaseType, userId: string, doseLogId: number) {
     const result = await db
       .select({
         doseLogId: doseLog.doseLogId,
@@ -96,10 +99,11 @@ export const doseLogRepository = {
 
   /**
    * 服用ログを作成
+   * @param db データベースオブジェクト
    * @param data 作成データ
    * @returns 作成された服用ログのオブジェクト
    */
-  async create(data: Omit<NewDoseLog, "doseLogId">) {
+  async create(db: DatabaseType, data: Omit<NewDoseLog, "doseLogId">) {
     const result = await db
       .insert(doseLog)
       .values({
@@ -115,11 +119,13 @@ export const doseLogRepository = {
 
   /**
    * 服用ログを更新
+   * @param db データベースオブジェクト
    * @param doseLogId 服用ログのID
    * @param data 更新データ
    * @returns 更新された服用ログのオブジェクト、見つからない場合はnull
    */
   async update(
+    db: DatabaseType,
     doseLogId: number,
     data: Partial<Omit<NewDoseLog, "doseLogId">>
   ) {
@@ -134,10 +140,11 @@ export const doseLogRepository = {
 
   /**
    * 服用ログを削除
+   * @param db データベースオブジェクト
    * @param doseLogId 服用ログのID
    * @returns 削除されたかどうか
    */
-  async delete(doseLogId: number) {
+  async delete(db: DatabaseType, doseLogId: number) {
     const result = await db
       .delete(doseLog)
       .where(eq(doseLog.doseLogId, doseLogId))
@@ -146,4 +153,3 @@ export const doseLogRepository = {
     return result.length > 0;
   },
 };
-

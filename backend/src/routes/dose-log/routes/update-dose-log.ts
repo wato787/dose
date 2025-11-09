@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { updateDoseLogSchema } from "../schema";
+import { db } from "../../../db";
 import { doseLogRepository } from "../../../repository/dose-log";
 import { scheduleRepository } from "../../../repository/schedule";
 import { BadRequestException, NotFoundException } from "../../../utils/http-exception";
@@ -21,7 +22,7 @@ router.put("/:id", async (c) => {
   }
 
   // 所有権を確認
-  const existing = await doseLogRepository.findByIdAndUserId(userId, doseLogId);
+  const existing = await doseLogRepository.findByIdAndUserId(db, userId, doseLogId);
   if (!existing) {
     throw new NotFoundException("Dose log not found");
   }
@@ -39,7 +40,7 @@ router.put("/:id", async (c) => {
 
   // scheduleIdが変更される場合、新しいscheduleIdがユーザーのものであることを確認
   if (validatedBody.data.scheduleId !== undefined) {
-    const schedule = await scheduleRepository.findByIdAndUserId(userId, validatedBody.data.scheduleId);
+    const schedule = await scheduleRepository.findByIdAndUserId(db, userId, validatedBody.data.scheduleId);
     if (!schedule) {
       throw new BadRequestException("Schedule not found or access denied");
     }
@@ -47,6 +48,7 @@ router.put("/:id", async (c) => {
 
   // Repositoryを使ってデータベースを更新
   const result = await doseLogRepository.update(
+    db,
     doseLogId,
     {
       scheduleId: validatedBody.data.scheduleId,

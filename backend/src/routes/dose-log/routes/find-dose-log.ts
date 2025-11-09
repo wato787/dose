@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { db } from "../../../db";
 import { doseLogRepository } from "../../../repository/dose-log";
 import { BadRequestException, NotFoundException } from "../../../utils/http-exception";
 import { ok } from "../../../utils/response";
@@ -19,7 +20,7 @@ router.get("/:id", async (c) => {
   }
 
   // Repositoryを使ってデータベースから取得
-  const result = await doseLogRepository.findByIdAndUserId(userId, doseLogId);
+  const result = await doseLogRepository.findByIdAndUserId(db, userId, doseLogId);
 
   if (!result) {
     throw new NotFoundException("Dose log not found");

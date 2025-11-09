@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { findDoseLogQuerySchema } from "../schema";
+import { db } from "../../../db";
 import { doseLogRepository } from "../../../repository/dose-log";
 import { BadRequestException } from "../../../utils/http-exception";
 import { ok } from "../../../utils/response";
@@ -28,6 +29,7 @@ router.get("/", async (c) => {
   // Repositoryを使ってデータベースから取得
   const doseLogs = validatedQuery.data.scheduleId !== undefined
     ? await doseLogRepository.findByScheduleId(
+        db,
         userId,
         validatedQuery.data.scheduleId,
         {
@@ -36,6 +38,7 @@ router.get("/", async (c) => {
         }
       )
     : await doseLogRepository.findByUserId(
+        db,
         userId,
         {
           limit: validatedQuery.data.limit,

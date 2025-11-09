@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { db } from "../../../db";
 import { doseLogRepository } from "../../../repository/dose-log";
 import { BadRequestException, NotFoundException } from "../../../utils/http-exception";
 import { noContent } from "../../../utils/response";
@@ -19,13 +20,13 @@ router.delete("/:id", async (c) => {
   }
 
   // 所有権を確認
-  const existing = await doseLogRepository.findByIdAndUserId(userId, doseLogId);
+  const existing = await doseLogRepository.findByIdAndUserId(db, userId, doseLogId);
   if (!existing) {
     throw new NotFoundException("Dose log not found");
   }
 
   // Repositoryを使ってデータベースから削除
-  const deleted = await doseLogRepository.delete(doseLogId);
+  const deleted = await doseLogRepository.delete(db, doseLogId);
 
   if (!deleted) {
     throw new NotFoundException("Dose log not found");
