@@ -8,12 +8,7 @@ import { ok } from "../../../utils/response";
 
 const router = new Hono();
 
-/**
- * PUT /api/dose-log/:id
- * 特定の服用ログを更新
- */
 router.put("/:id", async (c) => {
-  // ContextからユーザーIDを取得（middlewareで設定済み）
   const userId = c.get("userId");
   const doseLogId = parseInt(c.req.param("id"), 10);
 
@@ -21,13 +16,11 @@ router.put("/:id", async (c) => {
     throw new BadRequestException("Invalid dose log ID");
   }
 
-  // 所有権を確認
   const existing = await doseLogRepository.findByIdAndUserId(db, userId, doseLogId);
   if (!existing) {
     throw new NotFoundException("Dose log not found");
   }
 
-  // リクエストボディの取得とバリデーション
   const body = await c.req.json();
   const validatedBody = updateDoseLogSchema.safeParse(body);
 
@@ -38,7 +31,6 @@ router.put("/:id", async (c) => {
     );
   }
 
-  // scheduleIdが変更される場合、新しいscheduleIdがユーザーのものであることを確認
   if (validatedBody.data.scheduleId !== undefined) {
     const schedule = await scheduleRepository.findByIdAndUserId(db, userId, validatedBody.data.scheduleId);
     if (!schedule) {
@@ -46,7 +38,6 @@ router.put("/:id", async (c) => {
     }
   }
 
-  // Repositoryを使ってデータベースを更新
   const result = await doseLogRepository.update(
     db,
     doseLogId,

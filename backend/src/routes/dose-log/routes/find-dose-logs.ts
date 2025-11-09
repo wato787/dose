@@ -7,15 +7,8 @@ import { ok } from "../../../utils/response";
 
 const router = new Hono();
 
-/**
- * GET /api/dose-log
- * 認証されたユーザーの服用ログ一覧を取得
- */
 router.get("/", async (c) => {
-  // ContextからユーザーIDを取得（middlewareで設定済み）
   const userId = c.get("userId");
-
-  // クエリパラメータの取得とバリデーション
   const query = c.req.query();
   const validatedQuery = findDoseLogQuerySchema.safeParse(query);
 
@@ -26,7 +19,6 @@ router.get("/", async (c) => {
     );
   }
 
-  // Repositoryを使ってデータベースから取得
   const doseLogs = validatedQuery.data.scheduleId !== undefined
     ? await doseLogRepository.findByScheduleId(
         db,

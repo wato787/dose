@@ -8,15 +8,12 @@ import deleteDoseLogRouter from "./routes/delete-dose-log";
 
 const router = new Hono();
 
-// 認証が必要なルートに認証middlewareを適用
 router.use("*", authMiddleware);
 
-// 服用ログのCRUDルート
-router.route("/", findDoseLogsRouter); // 一覧取得
-router.route("/", findDoseLogRouter); // 一件取得
-router.route("/", createDoseLogRouter); // 作成
-router.route("/", updateDoseLogRouter); // 更新
-router.route("/", deleteDoseLogRouter); // 削除
+router.route("/", findDoseLogsRouter);
+router.route("/", findDoseLogRouter);
+router.route("/", createDoseLogRouter);
+router.route("/", updateDoseLogRouter);
+router.route("/", deleteDoseLogRouter);
 
 export default router;
-

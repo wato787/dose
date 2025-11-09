@@ -10,26 +10,18 @@ import { ok } from "../../../utils/response";
 
 const router = new Hono();
 
-/**
- * GET /api/medicine
- * 認証されたユーザーの薬一覧を取得（スケジュールとカスタムアイテムも含む）
- */
 router.get("/", async (c) => {
-    // ContextからユーザーIDを取得（middlewareで設定済み）
-    const userId = c.get("userId");
+  const userId = c.get("userId");
+  const query = c.req.query();
+  const validatedQuery = findMedicineQuerySchema.safeParse(query);
 
-    // クエリパラメータの取得とバリデーション
-    const query = c.req.query();
-    const validatedQuery = findMedicineQuerySchema.safeParse(query);
-
-    if (!validatedQuery.success) {
+  if (!validatedQuery.success) {
     throw new BadRequestException(
       "Invalid query parameters",
       validatedQuery.error.issues
-      );
-    }
+    );
+  }
 
-  // Repositoryを使ってデータベースから取得
   const medicines = validatedQuery.data.isActive !== undefined
     ? await medicineRepository.findByUserIdAndIsActive(
         db,
@@ -49,13 +41,11 @@ router.get("/", async (c) => {
         }
       );
 
-  // 各薬のスケジュール、カスタムアイテム、カスタムログも取得
   const medicinesWithRelations = await Promise.all(
     medicines.map(async (medicine) => {
       const schedules = await scheduleRepository.findByMedicineId(db, userId, medicine.medicineId);
       const customItems = await customItemRepository.findByMedicineId(db, userId, medicine.medicineId);
-      
-      // 各カスタムアイテムのカスタムログも取得
+
       const customItemsWithLogs = await Promise.all(
         customItems.map(async (item) => {
           const customLogs = await customLogRepository.findByCustomItemId(db, userId, item.customItemId);

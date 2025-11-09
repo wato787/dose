@@ -8,15 +8,8 @@ import { created } from "../../../utils/response";
 
 const router = new Hono();
 
-/**
- * POST /api/dose-log
- * 新しい服用ログを作成
- */
 router.post("/", async (c) => {
-  // ContextからユーザーIDを取得（middlewareで設定済み）
   const userId = c.get("userId");
-
-  // リクエストボディの取得とバリデーション
   const body = await c.req.json();
   const validatedBody = createDoseLogSchema.safeParse(body);
 
@@ -27,13 +20,11 @@ router.post("/", async (c) => {
     );
   }
 
-  // scheduleIdがユーザーのものであることを確認
   const schedule = await scheduleRepository.findByIdAndUserId(db, userId, validatedBody.data.scheduleId);
   if (!schedule) {
     throw new BadRequestException("Schedule not found or access denied");
   }
 
-  // Repositoryを使ってデータベースに作成
   const result = await doseLogRepository.create(db, {
     scheduleId: validatedBody.data.scheduleId,
     recordDate: validatedBody.data.recordDate,

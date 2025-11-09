@@ -6,12 +6,7 @@ import { noContent } from "../../../utils/response";
 
 const router = new Hono();
 
-/**
- * DELETE /api/dose-log/:id
- * 特定の服用ログを削除
- */
 router.delete("/:id", async (c) => {
-  // ContextからユーザーIDを取得（middlewareで設定済み）
   const userId = c.get("userId");
   const doseLogId = parseInt(c.req.param("id"), 10);
 
@@ -19,15 +14,12 @@ router.delete("/:id", async (c) => {
     throw new BadRequestException("Invalid dose log ID");
   }
 
-  // 所有権を確認
   const existing = await doseLogRepository.findByIdAndUserId(db, userId, doseLogId);
   if (!existing) {
     throw new NotFoundException("Dose log not found");
   }
 
-  // Repositoryを使ってデータベースから削除
   const deleted = await doseLogRepository.delete(db, doseLogId);
-
   if (!deleted) {
     throw new NotFoundException("Dose log not found");
   }
