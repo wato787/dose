@@ -1,8 +1,7 @@
 import type React from "react"
 import { useState } from "react"
 import { useNavigate } from "@tanstack/react-router"
-import { ChevronLeft, Pill, Clock, Calendar, Plus, X } from "lucide-react"
-import { Link } from "@tanstack/react-router"
+import { Pill, Clock, Calendar, Plus, X } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -122,20 +121,6 @@ export const Add = () => {
 
   return (
     <>
-      {/* Header */}
-      <div className="sticky top-0 z-10 bg-background border-b border-border">
-        <div className="flex items-center justify-between px-4 py-4">
-          <Link
-            to={"/medicine" as any}
-            className="p-2 -ml-2 hover:bg-muted rounded-lg transition-colors inline-block"
-          >
-            <ChevronLeft className="w-6 h-6 text-foreground" />
-          </Link>
-          <h1 className="text-lg font-medium text-foreground">薬を登録</h1>
-          <div className="w-10" />
-        </div>
-      </div>
-
       {/* Content */}
       <div className="px-4 py-6 space-y-6 pb-24">
         <form onSubmit={handleSubmit} className="space-y-6">

@@ -3,6 +3,7 @@ import { Edit } from '@/views/Medicine/Edit'
 import { requireAuth } from '@/lib/auth-guard'
 import { queryClient } from '@/lib/query-client'
 import { getMedicine } from '@/api/medicine'
+import { PageHeader } from '@/components/layout'
 
 export const Route = createFileRoute('/medicine/$id/edit')({
   beforeLoad: requireAuth,
@@ -15,6 +16,11 @@ export const Route = createFileRoute('/medicine/$id/edit')({
       queryFn: () => getMedicine(medicineId),
     })
   },
-  component: Edit,
+  component: () => (
+    <>
+      <PageHeader title="薬を編集" backTo="/medicine" />
+      <Edit />
+    </>
+  ),
 })
 
