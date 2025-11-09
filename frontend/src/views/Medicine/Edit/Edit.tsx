@@ -174,7 +174,7 @@ export const Edit = () => {
   return (
     <>
       {/* Content */}
-      <div className="px-4 py-6 space-y-6 pb-24">
+      <div className="px-4 py-6 space-y-6 pb-20">
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Medicine Name */}
           <div className="space-y-2">

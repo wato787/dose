@@ -28,7 +28,7 @@ export const Medicine = () => {
   return (
     <>
       {/* Content */}
-      <div className="px-4 py-6 space-y-4 pb-24">
+      <div className="px-4 py-6 space-y-4 pb-20">
         {medicines.length === 0 ? (
           // Empty state
           <div className="flex flex-col items-center justify-center py-12 space-y-4">

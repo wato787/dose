@@ -8,7 +8,7 @@ export const Home = () => {
     <>
       <TodayProgress />
 
-      <section className="px-4 py-6 space-y-4 pb-24">
+      <section className="px-4 py-6 space-y-4 pb-20">
         <ScheduleTime />
 
         <div className="space-y-3">
