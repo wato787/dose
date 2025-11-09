@@ -5,10 +5,10 @@ import { CustomItems } from "./CustomItems"
 
 export const Home = () => {
   return (
-    <main className="min-h-screen bg-background pb-24">
+    <>
       <TodayProgress />
 
-      <section className="px-4 py-6 space-y-4">
+      <section className="px-4 py-6 space-y-4 pb-24">
         <ScheduleTime />
 
         <div className="space-y-3">
@@ -16,6 +16,6 @@ export const Home = () => {
           <CustomItems />
         </div>
       </section>
-    </main>
+    </>
   )
 }

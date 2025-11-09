@@ -6,7 +6,7 @@ export const Route = createRootRoute({
   component: () => (
     <>
       <Header />
-      <main className="min-h-screen">
+      <main className="min-h-screen bg-background">
         <Outlet />
       </main>
       <Footer />

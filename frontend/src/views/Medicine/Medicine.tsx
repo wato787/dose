@@ -27,16 +27,14 @@ export const Medicine = () => {
 
   if (medicinesLoading) {
     return (
-      <main className="min-h-screen bg-background">
-        <div className="flex items-center justify-center py-12">
-          <p className="text-muted-foreground">読み込み中...</p>
-        </div>
-      </main>
+      <div className="flex items-center justify-center py-12">
+        <p className="text-muted-foreground">読み込み中...</p>
+      </div>
     )
   }
 
   return (
-    <main className="min-h-screen bg-background">
+    <>
       {/* Header */}
       <div className="sticky top-0 z-10 bg-background border-b border-border">
         <div className="flex items-center justify-between px-4 py-4">
@@ -131,6 +129,6 @@ export const Medicine = () => {
           </>
         )}
       </div>
-    </main>
+    </>
   )
 }

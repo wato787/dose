@@ -121,7 +121,7 @@ export const Add = () => {
   }
 
   return (
-    <main className="min-h-screen bg-background">
+    <>
       {/* Header */}
       <div className="sticky top-0 z-10 bg-background border-b border-border">
         <div className="flex items-center justify-between px-4 py-4">
@@ -298,6 +298,6 @@ export const Add = () => {
         </form>
 
       </div>
-    </main>
+    </>
   )
 }

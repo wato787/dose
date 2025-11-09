@@ -160,29 +160,29 @@ export const Edit = () => {
 
   if (medicineLoading) {
     return (
-      <main className="min-h-screen bg-background flex items-center justify-center">
+      <div className="flex items-center justify-center py-12">
         <div className="text-center space-y-2">
           <p className="text-muted-foreground">読み込み中...</p>
         </div>
-      </main>
+      </div>
     )
   }
 
   if (!medicine) {
     return (
-      <main className="min-h-screen bg-background flex items-center justify-center">
+      <div className="flex items-center justify-center py-12">
         <div className="text-center space-y-2">
           <p className="text-foreground font-medium">薬が見つかりません</p>
           <Link to={"/medicine" as any}>
             <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">一覧に戻る</Button>
           </Link>
         </div>
-      </main>
+      </div>
     )
   }
 
   return (
-    <main className="min-h-screen bg-background">
+    <>
       {/* Header */}
       <div className="sticky top-0 z-10 bg-background border-b border-border">
         <div className="flex items-center justify-between px-4 py-4">
@@ -358,6 +358,6 @@ export const Edit = () => {
           </div>
         </form>
       </div>
-    </main>
+    </>
   )
 }
