@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Medicine } from '@/views/Medicine'
+import { Pending } from '@/views/Medicine/Pending'
 import { requireAuth } from '@/lib/auth-guard'
 import { queryClient } from '@/lib/query-client'
 import { getMedicines } from '@/api/medicine'
@@ -15,6 +16,7 @@ export const Route = createFileRoute('/medicine/')({
       queryFn: () => getMedicines(),
     })
   },
+  pendingComponent: Pending,
   component: () => (
     <>
       <PageHeader title="薬管理" backTo="/" />

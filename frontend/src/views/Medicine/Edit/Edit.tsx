@@ -16,10 +16,10 @@ type CustomItemForm = {
 
 export const Edit = () => {
   const navigate = useNavigate()
-  const { id } = useParams({ from: "/medicine/$id/edit" as any })
+    const { id } = useParams({ from: "/medicine/$id/edit" })
   const medicineId = Number(id)
 
-  const { data: medicine, isLoading: medicineLoading } = useMedicine(medicineId)
+  const { data: medicine } = useMedicine(medicineId)
   const schedules = medicine?.schedules || []
   const firstSchedule = schedules[0]
   const existingCustomItems = medicine?.customItems || []
@@ -158,22 +158,12 @@ export const Edit = () => {
     }))
   }
 
-  if (medicineLoading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <div className="text-center space-y-2">
-          <p className="text-muted-foreground">読み込み中...</p>
-        </div>
-      </div>
-    )
-  }
-
   if (!medicine) {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-center space-y-2">
           <p className="text-foreground font-medium">薬が見つかりません</p>
-          <Link to={"/medicine" as any}>
+          <Link to={"/medicine"}>
             <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">一覧に戻る</Button>
           </Link>
         </div>

@@ -6,7 +6,7 @@ import { useMedicines, useDeleteMedicine } from "@/hooks/useMedicines"
 import type { FrequencyType } from "@/types/domain"
 
 export const Medicine = () => {
-  const { data: medicinesData, isLoading: medicinesLoading } = useMedicines()
+  const { data: medicinesData } = useMedicines()
   const medicines = medicinesData?.medicines || []
   const deleteMedicine = useDeleteMedicine()
 
@@ -25,14 +25,6 @@ export const Medicine = () => {
     return labels[type] || type
   }
 
-  if (medicinesLoading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <p className="text-muted-foreground">読み込み中...</p>
-      </div>
-    )
-  }
-
   return (
     <>
       {/* Content */}
@@ -44,7 +36,7 @@ export const Medicine = () => {
               <Pill className="w-6 h-6 text-primary" />
             </div>
             <p className="text-sm text-muted-foreground">まだ薬が登録されていません</p>
-            <Link to={"/medicine/add" as any}>
+            <Link to={"/medicine/add"}>
               <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
                 <Plus className="w-4 h-4 mr-2" />
                 最初の薬を登録
@@ -71,8 +63,8 @@ export const Medicine = () => {
                       </div>
                       <div className="flex gap-2">
                         <Link
-                          to={"/medicine/$id/edit" as any}
-                          params={{ id: String(medicine.medicineId) } as any}
+                          to={"/medicine/$id/edit"}
+                          params={{ id: String(medicine.medicineId) }}
                           className="p-2 hover:bg-muted rounded-lg transition-colors inline-block"
                         >
                           <Edit2 className="w-4 h-4 text-secondary" />

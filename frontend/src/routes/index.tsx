@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Home } from '@/views/Home'
+import { Pending } from '@/views/Home/Pending'
 import { requireAuth } from '@/lib/auth-guard'
 import { queryClient } from '@/lib/query-client'
 import { getMedicines } from '@/api/medicine'
@@ -21,6 +22,7 @@ export const Route = createFileRoute('/')({
       }),
     ])
   },
+  pendingComponent: Pending,
   component: Home,
 })
 
