@@ -1,1 +1,2 @@
 export { Medicine } from "./Medicine"
+

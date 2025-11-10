@@ -1,13 +1,9 @@
 {
-	"$schema": "https://biomejs.dev/schemas/2.3.3/schema.json",
+	"$schema": "https://biomejs.dev/schemas/2.3.4/schema.json",
 	"vcs": {
-		"enabled": false,
+		"enabled": true,
 		"clientKind": "git",
-		"useIgnoreFile": false
-	},
-	"files": {
-		"ignoreUnknown": false,
-		"includes": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.js", "src/**/*.jsx"]
+		"useIgnoreFile": true
 	},
 	"formatter": {
 		"enabled": true,
@@ -24,7 +20,15 @@
 				"noUnassignedVariables": "warn"
 			},
 			"correctness": {
-				"noUnusedImports": "warn"
+				"noUnusedImports": "warn",
+				"noUnusedVariables": "warn"
+			},
+			"style": {
+				"noUnusedTemplateLiteral": "warn",
+				"useImportType": "error"
+			},
+			"complexity": {
+				"noForEach": "off"
 			}
 		}
 	},
@@ -35,14 +39,6 @@
 			"trailingCommas": "es5",
 			"semicolons": "always",
 			"arrowParentheses": "always"
-		}
-	},
-	"assist": {
-		"enabled": true,
-		"actions": {
-			"source": {
-				"organizeImports": "on"
-			}
 		}
 	}
 }

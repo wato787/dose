@@ -27,6 +27,7 @@ dist-ssr
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
+!.vscode/settings.json
 .idea
 .DS_Store
 *.suo
@@ -38,6 +39,12 @@ dist-ssr
 # Generated files
 **/routeTree.gen.ts
 frontend/src/routeTree.gen.ts
+
+# Database
+*.db
+*.sqlite
+sqlite.db
+drizzle/
 
 # Environment variables
 .env

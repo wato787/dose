@@ -1,6 +1,10 @@
 import { Link, useRouterState } from "@tanstack/react-router"
 import { Home, Pill, History, Settings } from "lucide-react"
 
+
+
+
+
 export const BottomNav = () => {
   const router = useRouterState()
   const pathname = router.location.pathname
