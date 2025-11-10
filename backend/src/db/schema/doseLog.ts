@@ -1,4 +1,4 @@
-import { sqliteTable, integer } from "drizzle-orm/sqlite-core";
+import { integer, sqliteTable } from "drizzle-orm/sqlite-core";
 import { schedule } from "./schedule";
 
 /**
@@ -7,7 +7,9 @@ import { schedule } from "./schedule";
  */
 export const doseLog = sqliteTable("dose_log", {
   doseLogId: integer("dose_log_id").primaryKey({ autoIncrement: true }),
-  scheduleId: integer("schedule_id").notNull().references(() => schedule.scheduleId),
+  scheduleId: integer("schedule_id")
+    .notNull()
+    .references(() => schedule.scheduleId),
   recordDate: integer("record_date", { mode: "timestamp" }).notNull(),
   isTaken: integer("is_taken", { mode: "boolean" }).notNull(),
   takenAt: integer("taken_at", { mode: "timestamp" }),

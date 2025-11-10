@@ -1,25 +1,25 @@
-import { useState } from "react"
-import { Link } from "@tanstack/react-router"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Button } from "@/components/ui/button"
-import { PasswordInput } from "@/components/PasswordInput"
-import { useLogin } from "./useLogin"
+import { Link } from "@tanstack/react-router";
+import { useState } from "react";
+import { PasswordInput } from "@/components/PasswordInput";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useLogin } from "./useLogin";
 
 export const Login = () => {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const { mutate: login, isPending, error } = useLogin()
+  const { mutate: login, isPending, error } = useLogin();
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     login({
       email,
       password,
-    })
-  }
+    });
+  };
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
@@ -84,12 +84,15 @@ export const Login = () => {
         <div className="text-center">
           <p className="text-sm text-muted-foreground">
             アカウントをお持ちでないですか？{" "}
-            <Link to="/signup" className="font-medium text-primary hover:text-primary/90 transition-colors">
+            <Link
+              to="/signup"
+              className="font-medium text-primary hover:text-primary/90 transition-colors"
+            >
               サインアップ
             </Link>
           </p>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};

@@ -1,4 +1,2 @@
-import { DoseRecord } from "./DoseRecord"
-export { DoseRecord }
-
-
+import { DoseRecord } from "./DoseRecord";
+export { DoseRecord };

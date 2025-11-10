@@ -1,4 +1,2 @@
-import { TodayProgress } from "./TodayProgress"
-export { TodayProgress }
-
-
+import { TodayProgress } from "./TodayProgress";
+export { TodayProgress };

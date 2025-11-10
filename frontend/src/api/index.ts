@@ -2,7 +2,6 @@
  * API関数のバレルエクスポート
  */
 
-export * from "./medicine"
-export * from "./dose-log"
-export * from "./auth"
-
+export * from "./auth";
+export * from "./dose-log";
+export * from "./medicine";

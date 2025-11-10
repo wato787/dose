@@ -1,9 +1,8 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { Login } from '@/views/Login'
-import { redirectIfAuthenticated } from '@/lib/auth-guard'
+import { createFileRoute } from "@tanstack/react-router";
+import { redirectIfAuthenticated } from "@/lib/auth-guard";
+import { Login } from "@/views/Login";
 
-export const Route = createFileRoute('/login')({
+export const Route = createFileRoute("/login")({
   beforeLoad: redirectIfAuthenticated,
   component: Login,
-})
-
+});

@@ -1,11 +1,11 @@
 import { Hono } from "hono";
-import { db } from "../../../db";
-import { medicineRepository } from "../../../repository/medicine";
-import { customLogRepository } from "../../../repository/custom-log";
-import { customItemRepository } from "../../../repository/custom-item";
-import { BadRequestException, NotFoundException } from "../../../utils/http-exception";
-import { created, ok, noContent } from "../../../utils/response";
 import { z } from "zod";
+import { db } from "../../../db";
+import { customItemRepository } from "../../../repository/custom-item";
+import { customLogRepository } from "../../../repository/custom-log";
+import { medicineRepository } from "../../../repository/medicine";
+import { BadRequestException, NotFoundException } from "../../../utils/http-exception";
+import { created, noContent, ok } from "../../../utils/response";
 
 const router = new Hono();
 
@@ -39,13 +39,14 @@ router.post("/:id/custom-logs", async (c) => {
   const validatedBody = createCustomLogSchema.safeParse(body);
 
   if (!validatedBody.success) {
-    throw new BadRequestException(
-      "Invalid request body",
-      validatedBody.error.issues
-    );
+    throw new BadRequestException("Invalid request body", validatedBody.error.issues);
   }
 
-  const customItem = await customItemRepository.findByIdAndUserId(db, userId, validatedBody.data.customItemId);
+  const customItem = await customItemRepository.findByIdAndUserId(
+    db,
+    userId,
+    validatedBody.data.customItemId
+  );
   if (!customItem || customItem.medicineId !== medicineId) {
     throw new BadRequestException("Custom item not found or does not belong to this medicine");
   }
@@ -78,7 +79,11 @@ router.put("/:id/custom-logs/:logId", async (c) => {
     throw new NotFoundException("Custom log not found");
   }
 
-  const customItem = await customItemRepository.findByIdAndUserId(db, userId, existingLog.customItemId);
+  const customItem = await customItemRepository.findByIdAndUserId(
+    db,
+    userId,
+    existingLog.customItemId
+  );
   if (!customItem || customItem.medicineId !== medicineId) {
     throw new BadRequestException("Custom log does not belong to this medicine");
   }
@@ -87,10 +92,7 @@ router.put("/:id/custom-logs/:logId", async (c) => {
   const validatedBody = updateCustomLogSchema.safeParse(body);
 
   if (!validatedBody.success) {
-    throw new BadRequestException(
-      "Invalid request body",
-      validatedBody.error.issues
-    );
+    throw new BadRequestException("Invalid request body", validatedBody.error.issues);
   }
 
   const result = await customLogRepository.update(db, customLogId, {
@@ -124,7 +126,11 @@ router.delete("/:id/custom-logs/:logId", async (c) => {
     throw new NotFoundException("Custom log not found");
   }
 
-  const customItem = await customItemRepository.findByIdAndUserId(db, userId, existingLog.customItemId);
+  const customItem = await customItemRepository.findByIdAndUserId(
+    db,
+    userId,
+    existingLog.customItemId
+  );
   if (!customItem || customItem.medicineId !== medicineId) {
     throw new BadRequestException("Custom log does not belong to this medicine");
   }
@@ -138,4 +144,3 @@ router.delete("/:id/custom-logs/:logId", async (c) => {
 });
 
 export default router;
-

@@ -1,4 +1,4 @@
-import { QueryClient } from '@tanstack/react-query'
+import { QueryClient } from "@tanstack/react-query";
 
 /**
  * QueryClientのインスタンス
@@ -12,5 +12,4 @@ export const queryClient = new QueryClient({
       refetchOnWindowFocus: false,
     },
   },
-})
-
+});

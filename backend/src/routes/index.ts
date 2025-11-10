@@ -1,6 +1,6 @@
 import { Hono } from "hono";
-import medicineRouter from "./medicine";
 import doseLogRouter from "./dose-log";
+import medicineRouter from "./medicine";
 
 const router = new Hono();
 
@@ -12,4 +12,3 @@ router.route("/medicine", medicineRouter);
 router.route("/dose-log", doseLogRouter);
 
 export default router;
-

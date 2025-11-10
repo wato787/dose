@@ -1,11 +1,11 @@
 import { Hono } from "hono";
-import { createMedicineSchema } from "../schema";
-import { BadRequestException } from "../../../utils/http-exception";
-import { created } from "../../../utils/response";
 import { db } from "../../../db";
+import { customItemRepository } from "../../../repository/custom-item";
 import { medicineRepository } from "../../../repository/medicine";
 import { scheduleRepository } from "../../../repository/schedule";
-import { customItemRepository } from "../../../repository/custom-item";
+import { BadRequestException } from "../../../utils/http-exception";
+import { created } from "../../../utils/response";
+import { createMedicineSchema } from "../schema";
 
 const router = new Hono();
 
@@ -15,10 +15,7 @@ router.post("/", async (c) => {
   const validatedBody = createMedicineSchema.safeParse(body);
 
   if (!validatedBody.success) {
-    throw new BadRequestException(
-      "Invalid request body",
-      validatedBody.error.issues
-    );
+    throw new BadRequestException("Invalid request body", validatedBody.error.issues);
   }
 
   const result = await db.transaction(async (tx) => {
@@ -67,4 +64,3 @@ router.post("/", async (c) => {
 });
 
 export default router;
-

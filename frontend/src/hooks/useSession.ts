@@ -2,9 +2,9 @@
  * セッション管理フック
  */
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { getSession, signOut } from "@/api/auth"
-import { useNavigate } from "@tanstack/react-router"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
+import { getSession, signOut } from "@/api/auth";
 
 /**
  * セッション取得
@@ -15,23 +15,22 @@ export const useSession = () => {
     queryFn: getSession,
     retry: false,
     staleTime: 1000 * 60 * 5, // 5分
-  })
-}
+  });
+};
 
 /**
  * ログアウト
  */
 export const useSignOut = () => {
-  const queryClient = useQueryClient()
-  const navigate = useNavigate()
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   return useMutation({
     mutationFn: signOut,
     onSuccess: () => {
-      queryClient.setQueryData(["session"], null)
-      queryClient.clear()
-      navigate({ to: "/login" })
+      queryClient.setQueryData(["session"], null);
+      queryClient.clear();
+      navigate({ to: "/login" });
     },
-  })
-}
-
+  });
+};

@@ -1,29 +1,29 @@
-import { Link } from "@tanstack/react-router"
-import { Pill, Edit2, Trash2, Plus, Clock } from "lucide-react"
-import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { useMedicines, useDeleteMedicine } from "@/hooks/useMedicines"
-import type { FrequencyType } from "@/types/domain"
+import { Link } from "@tanstack/react-router";
+import { Clock, Edit2, Pill, Plus, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { useDeleteMedicine, useMedicines } from "@/hooks/useMedicines";
+import type { FrequencyType } from "@/types/domain";
 
 export const Medicine = () => {
-  const { data: medicinesData } = useMedicines()
-  const medicines = medicinesData?.medicines || []
-  const deleteMedicine = useDeleteMedicine()
+  const { data: medicinesData } = useMedicines();
+  const medicines = medicinesData?.medicines || [];
+  const deleteMedicine = useDeleteMedicine();
 
   const handleDelete = async (medicineId: number) => {
     if (confirm("この薬を削除しますか？")) {
-      await deleteMedicine.mutateAsync(medicineId)
+      await deleteMedicine.mutateAsync(medicineId);
     }
-  }
+  };
 
   const getFrequencyLabel = (type: FrequencyType) => {
     const labels: Record<FrequencyType, string> = {
       DAILY: "毎日",
       WEEKLY: "週1回",
       CUSTOM: "カスタム",
-    }
-    return labels[type] || type
-  }
+    };
+    return labels[type] || type;
+  };
 
   return (
     <>
@@ -48,7 +48,7 @@ export const Medicine = () => {
             {/* Medicines List */}
             <div className="space-y-3">
               {medicines.map((medicine) => {
-                const medicineSchedules = medicine.schedules || []
+                const medicineSchedules = medicine.schedules || [];
                 return (
                   <Card key={medicine.medicineId} className="bg-card border-border p-4 space-y-3">
                     <div className="flex items-start justify-between">
@@ -58,7 +58,9 @@ export const Medicine = () => {
                           {medicine.name}
                         </h3>
                         {medicine.description && (
-                          <p className="text-sm text-muted-foreground mt-1">{medicine.description}</p>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            {medicine.description}
+                          </p>
                         )}
                       </div>
                       <div className="flex gap-2">
@@ -83,16 +85,21 @@ export const Medicine = () => {
                     {medicineSchedules.length > 0 && (
                       <div className="space-y-2 pt-2 border-t border-border">
                         {medicineSchedules.map((schedule) => (
-                          <div key={schedule.scheduleId} className="flex items-center gap-2 text-sm">
+                          <div
+                            key={schedule.scheduleId}
+                            className="flex items-center gap-2 text-sm"
+                          >
                             <Clock className="w-4 h-4 text-secondary" />
                             <span className="text-foreground font-medium">{schedule.time}</span>
-                            <span className="text-muted-foreground">{getFrequencyLabel(schedule.frequencyType)}</span>
+                            <span className="text-muted-foreground">
+                              {getFrequencyLabel(schedule.frequencyType)}
+                            </span>
                           </div>
                         ))}
                       </div>
                     )}
                   </Card>
-                )
+                );
               })}
             </div>
 
@@ -109,5 +116,5 @@ export const Medicine = () => {
         )}
       </div>
     </>
-  )
-}
+  );
+};

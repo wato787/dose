@@ -1,4 +1,4 @@
-import { Link } from '@tanstack/react-router'
+import { Link } from "@tanstack/react-router";
 
 export const NotFound = () => {
   return (
@@ -15,5 +15,5 @@ export const NotFound = () => {
         ホームに戻る
       </Link>
     </div>
-  )
-}
+  );
+};

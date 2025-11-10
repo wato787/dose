@@ -1,11 +1,11 @@
 import { Hono } from "hono";
-import { updateMedicineSchema } from "../schema";
 import { db } from "../../../db";
+import { customItemRepository } from "../../../repository/custom-item";
 import { medicineRepository } from "../../../repository/medicine";
 import { scheduleRepository } from "../../../repository/schedule";
-import { customItemRepository } from "../../../repository/custom-item";
 import { BadRequestException, NotFoundException } from "../../../utils/http-exception";
 import { ok } from "../../../utils/response";
+import { updateMedicineSchema } from "../schema";
 
 const router = new Hono();
 
@@ -26,10 +26,7 @@ router.put("/:id", async (c) => {
   const validatedBody = updateMedicineSchema.safeParse(body);
 
   if (!validatedBody.success) {
-    throw new BadRequestException(
-      "Invalid request body",
-      validatedBody.error.issues
-    );
+    throw new BadRequestException("Invalid request body", validatedBody.error.issues);
   }
 
   const result = await db.transaction(async (tx) => {
@@ -39,8 +36,10 @@ router.put("/:id", async (c) => {
       isActive: boolean;
     }> = {};
     if (validatedBody.data.name !== undefined) updateData.name = validatedBody.data.name;
-    if (validatedBody.data.description !== undefined) updateData.description = validatedBody.data.description;
-    if (validatedBody.data.isActive !== undefined) updateData.isActive = validatedBody.data.isActive;
+    if (validatedBody.data.description !== undefined)
+      updateData.description = validatedBody.data.description;
+    if (validatedBody.data.isActive !== undefined)
+      updateData.isActive = validatedBody.data.isActive;
 
     const medicine = await medicineRepository.update(tx, medicineId, updateData);
     if (!medicine) {
@@ -64,9 +63,13 @@ router.put("/:id", async (c) => {
       }
     }
 
-    let customItemsResult = [];
+    const customItemsResult = [];
     if (validatedBody.data.customItems !== undefined) {
-      const existingCustomItems = await customItemRepository.findByMedicineId(tx, userId, medicineId);
+      const existingCustomItems = await customItemRepository.findByMedicineId(
+        tx,
+        userId,
+        medicineId
+      );
       for (const item of existingCustomItems) {
         await customItemRepository.delete(tx, item.customItemId);
       }
@@ -95,4 +98,3 @@ router.put("/:id", async (c) => {
 });
 
 export default router;
-

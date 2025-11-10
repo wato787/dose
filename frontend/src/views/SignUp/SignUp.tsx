@@ -1,35 +1,35 @@
-import { useState } from "react"
-import { Link } from "@tanstack/react-router"
-import { Check } from "lucide-react"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Button } from "@/components/ui/button"
-import { PasswordInput } from "@/components/PasswordInput"
-import { useSignUp } from "./useSignUp"
+import { Link } from "@tanstack/react-router";
+import { Check } from "lucide-react";
+import { useState } from "react";
+import { PasswordInput } from "@/components/PasswordInput";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useSignUp } from "./useSignUp";
 
 export const SignUp = () => {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
-  const [name, setName] = useState("")
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [name, setName] = useState("");
 
-  const passwordsMatch = password === confirmPassword && password.length >= 8
-  const hasUpperCase = /[A-Z]/.test(password)
-  const hasNumber = /[0-9]/.test(password)
-  const hasMinLength = password.length >= 8
+  const passwordsMatch = password === confirmPassword && password.length >= 8;
+  const hasUpperCase = /[A-Z]/.test(password);
+  const hasNumber = /[0-9]/.test(password);
+  const hasMinLength = password.length >= 8;
 
-  const {mutate:signup,isPending,error} = useSignUp()
+  const { mutate: signup, isPending, error } = useSignUp();
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!passwordsMatch) return
+    e.preventDefault();
+    if (!passwordsMatch) return;
 
     signup({
       name,
       email,
       password,
-    })
-  }
+    });
+  };
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
@@ -121,9 +121,15 @@ export const SignUp = () => {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
-              className={confirmPassword && !passwordsMatch ? "border-destructive focus-visible:ring-destructive" : ""}
+              className={
+                confirmPassword && !passwordsMatch
+                  ? "border-destructive focus-visible:ring-destructive"
+                  : ""
+              }
             />
-            {confirmPassword && !passwordsMatch && <p className="text-xs text-destructive">パスワードが一致しません</p>}
+            {confirmPassword && !passwordsMatch && (
+              <p className="text-xs text-destructive">パスワードが一致しません</p>
+            )}
           </div>
 
           {/* Error Message */}
@@ -153,12 +159,15 @@ export const SignUp = () => {
         <div className="text-center">
           <p className="text-sm text-muted-foreground">
             既にアカウントをお持ちですか？{" "}
-            <Link to="/login" className="font-medium text-primary hover:text-primary/90 transition-colors">
+            <Link
+              to="/login"
+              className="font-medium text-primary hover:text-primary/90 transition-colors"
+            >
               ログイン
             </Link>
           </p>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};

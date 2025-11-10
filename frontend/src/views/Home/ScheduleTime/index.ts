@@ -1,4 +1,2 @@
-import { ScheduleTime } from "./ScheduleTime"
-export { ScheduleTime }
-
-
+import { ScheduleTime } from "./ScheduleTime";
+export { ScheduleTime };

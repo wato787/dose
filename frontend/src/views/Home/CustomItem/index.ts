@@ -1,4 +1,2 @@
-import { CustomItem } from "./CustomItem"
-export { CustomItem }
-
-
+import { CustomItem } from "./CustomItem";
+export { CustomItem };

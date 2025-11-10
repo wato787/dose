@@ -57,4 +57,3 @@ export class InternalServerErrorException extends HttpException {
     super(500, message, details);
   }
 }
-

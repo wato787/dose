@@ -1,10 +1,10 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { Add } from '@/views/Medicine/Add'
-import { Loading } from '@/components/Loading'
-import { requireAuth } from '@/lib/auth-guard'
-import { PageHeader } from '@/components/layout'
+import { createFileRoute } from "@tanstack/react-router";
+import { Loading } from "@/components/Loading";
+import { PageHeader } from "@/components/layout";
+import { requireAuth } from "@/lib/auth-guard";
+import { Add } from "@/views/Medicine/Add";
 
-export const Route = createFileRoute('/medicine/add')({
+export const Route = createFileRoute("/medicine/add")({
   beforeLoad: requireAuth,
   pendingComponent: Loading,
   component: () => (
@@ -13,5 +13,4 @@ export const Route = createFileRoute('/medicine/add')({
       <Add />
     </>
   ),
-})
-
+});

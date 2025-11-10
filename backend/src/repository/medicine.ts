@@ -1,8 +1,8 @@
+import { and, eq } from "drizzle-orm";
+import type { DatabaseType } from "../db";
 import { medicine } from "../db/schema";
 import type { NewMedicine } from "../db/schema/medicine";
 import type { PaginationOptions } from "../types/pagination";
-import { eq, and } from "drizzle-orm";
-import type { DatabaseType } from "../db";
 
 /**
  * Medicine Repository
@@ -35,16 +35,16 @@ export const medicineRepository = {
    * @param pagination ページネーションオプション
    * @returns 薬の配列
    */
-  async findByUserIdAndIsActive(db: DatabaseType, userId: string, isActive: boolean, pagination?: PaginationOptions) {
+  async findByUserIdAndIsActive(
+    db: DatabaseType,
+    userId: string,
+    isActive: boolean,
+    pagination?: PaginationOptions
+  ) {
     const result = await db
       .select()
       .from(medicine)
-      .where(
-        and(
-          eq(medicine.userId, userId),
-          eq(medicine.isActive, isActive)
-        )
-      )
+      .where(and(eq(medicine.userId, userId), eq(medicine.isActive, isActive)))
       .limit(pagination?.limit ?? 100)
       .offset(pagination?.offset ?? 0);
 
@@ -62,12 +62,7 @@ export const medicineRepository = {
     const result = await db
       .select()
       .from(medicine)
-      .where(
-        and(
-          eq(medicine.medicineId, medicineId),
-          eq(medicine.userId, userId)
-        )
-      )
+      .where(and(eq(medicine.medicineId, medicineId), eq(medicine.userId, userId)))
       .limit(1);
 
     return result[0] ?? null;
@@ -121,10 +116,7 @@ export const medicineRepository = {
    * @returns 削除されたかどうか
    */
   async delete(db: DatabaseType, medicineId: number) {
-    const result = await db
-      .delete(medicine)
-      .where(eq(medicine.medicineId, medicineId))
-      .returning();
+    const result = await db.delete(medicine).where(eq(medicine.medicineId, medicineId)).returning();
 
     return result.length > 0;
   },

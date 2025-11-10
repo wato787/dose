@@ -1,10 +1,10 @@
-import { Link } from "@tanstack/react-router"
-import { ChevronLeft } from "lucide-react"
+import { Link } from "@tanstack/react-router";
+import { ChevronLeft } from "lucide-react";
 
 type PageHeaderProps = {
-  title: string
-  backTo: string
-}
+  title: string;
+  backTo: string;
+};
 
 export const PageHeader = ({ title, backTo }: PageHeaderProps) => {
   return (
@@ -19,6 +19,5 @@ export const PageHeader = ({ title, backTo }: PageHeaderProps) => {
         <div className="w-10" />
       </div>
     </div>
-  )
-}
-
+  );
+};

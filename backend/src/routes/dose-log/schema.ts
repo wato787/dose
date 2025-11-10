@@ -5,10 +5,19 @@ import { z } from "zod";
  */
 export const findDoseLogQuerySchema = z.object({
   // オプション: フィルタリング用
-  scheduleId: z.string().optional().transform((val) => (val ? parseInt(val, 10) : undefined)),
+  scheduleId: z
+    .string()
+    .optional()
+    .transform((val) => (val ? parseInt(val, 10) : undefined)),
   // ページネーション用
-  limit: z.string().optional().transform((val) => (val ? parseInt(val, 10) : undefined)),
-  offset: z.string().optional().transform((val) => (val ? parseInt(val, 10) : undefined)),
+  limit: z
+    .string()
+    .optional()
+    .transform((val) => (val ? parseInt(val, 10) : undefined)),
+  offset: z
+    .string()
+    .optional()
+    .transform((val) => (val ? parseInt(val, 10) : undefined)),
 });
 
 /**
@@ -41,4 +50,3 @@ export const doseLogResponseSchema = z.object({
   isTaken: z.boolean(),
   takenAt: z.date().nullable(),
 });
-

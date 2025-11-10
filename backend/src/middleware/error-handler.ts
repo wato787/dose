@@ -1,4 +1,4 @@
-import { MiddlewareHandler } from "hono";
+import type { MiddlewareHandler } from "hono";
 import { HttpException } from "../utils/http-exception";
 
 /**
@@ -15,10 +15,6 @@ export const errorHandler: MiddlewareHandler = async (c, next) => {
 
     // 予期しないエラー
     console.error("Unhandled error:", error);
-    return c.json(
-      { error: "Internal Server Error" },
-      500
-    );
+    return c.json({ error: "Internal Server Error" }, 500);
   }
 };
-

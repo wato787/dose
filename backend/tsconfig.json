@@ -29,4 +29,3 @@
   "include": ["src", "scripts", "drizzle.config.ts"],
   "exclude": ["node_modules", "dist"]
 }
-

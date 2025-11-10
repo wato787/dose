@@ -1,8 +1,8 @@
-import { schedule, medicine } from "../db/schema";
+import { and, eq } from "drizzle-orm";
+import type { DatabaseType } from "../db";
+import { medicine, schedule } from "../db/schema";
 import type { NewSchedule } from "../db/schema/schedule";
 import type { PaginationOptions } from "../types/pagination";
-import { eq, and } from "drizzle-orm";
-import type { DatabaseType } from "../db";
 
 /**
  * Schedule Repository
@@ -42,7 +42,12 @@ export const scheduleRepository = {
    * @param pagination ページネーションオプション
    * @returns スケジュールの配列
    */
-  async findByMedicineId(db: DatabaseType, userId: string, medicineId: number, pagination?: PaginationOptions) {
+  async findByMedicineId(
+    db: DatabaseType,
+    userId: string,
+    medicineId: number,
+    pagination?: PaginationOptions
+  ) {
     const result = await db
       .select({
         scheduleId: schedule.scheduleId,
@@ -53,12 +58,7 @@ export const scheduleRepository = {
       })
       .from(schedule)
       .innerJoin(medicine, eq(schedule.medicineId, medicine.medicineId))
-      .where(
-        and(
-          eq(medicine.userId, userId),
-          eq(schedule.medicineId, medicineId)
-        )
-      )
+      .where(and(eq(medicine.userId, userId), eq(schedule.medicineId, medicineId)))
       .limit(pagination?.limit ?? 100)
       .offset(pagination?.offset ?? 0);
 
@@ -83,12 +83,7 @@ export const scheduleRepository = {
       })
       .from(schedule)
       .innerJoin(medicine, eq(schedule.medicineId, medicine.medicineId))
-      .where(
-        and(
-          eq(schedule.scheduleId, scheduleId),
-          eq(medicine.userId, userId)
-        )
-      )
+      .where(and(eq(schedule.scheduleId, scheduleId), eq(medicine.userId, userId)))
       .limit(1);
 
     return result[0] ?? null;
@@ -142,10 +137,7 @@ export const scheduleRepository = {
    * @returns 削除されたかどうか
    */
   async delete(db: DatabaseType, scheduleId: number) {
-    const result = await db
-      .delete(schedule)
-      .where(eq(schedule.scheduleId, scheduleId))
-      .returning();
+    const result = await db.delete(schedule).where(eq(schedule.scheduleId, scheduleId)).returning();
 
     return result.length > 0;
   },

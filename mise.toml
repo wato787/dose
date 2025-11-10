@@ -4,3 +4,7 @@ bun = "latest"
 [tasks.dev]
 description = "フロントエンドとバックエンドの開発サーバーを起動"
 run = "cd frontend && bun run dev & cd backend && bun run dev & wait"
+
+[tasks.format]
+description = "全ファイルをBiomeでフォーマット"
+run = "bun run format"

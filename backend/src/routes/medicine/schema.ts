@@ -1,9 +1,18 @@
 import { z } from "zod";
 
 export const findMedicineQuerySchema = z.object({
-  isActive: z.string().optional().transform((val) => val === "true"),
-  limit: z.string().optional().transform((val) => (val ? parseInt(val, 10) : undefined)),
-  offset: z.string().optional().transform((val) => (val ? parseInt(val, 10) : undefined)),
+  isActive: z
+    .string()
+    .optional()
+    .transform((val) => val === "true"),
+  limit: z
+    .string()
+    .optional()
+    .transform((val) => (val ? parseInt(val, 10) : undefined)),
+  offset: z
+    .string()
+    .optional()
+    .transform((val) => (val ? parseInt(val, 10) : undefined)),
 });
 
 export const scheduleInputSchema = z.object({

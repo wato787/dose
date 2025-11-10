@@ -27,4 +27,3 @@ export function updated<T>(c: Context, data: T) {
 export function noContent(c: Context) {
   return c.body(null, 204);
 }
-

@@ -1,22 +1,22 @@
-import type React from "react"
-import { useState } from "react"
-import { useNavigate } from "@tanstack/react-router"
-import { Pill, Clock, Calendar, Plus, X } from "lucide-react"
-import { Card } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { useCreateMedicine } from "@/hooks/useMedicines"
-import type { FrequencyType, CustomItemDataType } from "@/types/domain"
+import { useNavigate } from "@tanstack/react-router";
+import { Calendar, Clock, Pill, Plus, X } from "lucide-react";
+import type React from "react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { useCreateMedicine } from "@/hooks/useMedicines";
+import type { CustomItemDataType, FrequencyType } from "@/types/domain";
 
 type CustomItemForm = {
-  itemName: string
-  dataType: CustomItemDataType
-  isRequired: boolean
-}
+  itemName: string;
+  dataType: CustomItemDataType;
+  isRequired: boolean;
+};
 
 export const Add = () => {
-  const navigate = useNavigate()
-  const createMedicine = useCreateMedicine()
+  const navigate = useNavigate();
+  const createMedicine = useCreateMedicine();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -25,46 +25,48 @@ export const Add = () => {
     frequency_type: "DAILY" as FrequencyType,
     start_date: new Date().toISOString().split("T")[0],
     customItems: [] as CustomItemForm[],
-  })
+  });
 
-  const [errors, setErrors] = useState<Record<string, string>>({})
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
-    }))
+    }));
     if (errors[name]) {
       setErrors((prev) => ({
         ...prev,
         [name]: "",
-      }))
+      }));
     }
-  }
+  };
 
   const validateForm = () => {
-    const newErrors: Record<string, string> = {}
+    const newErrors: Record<string, string> = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = "薬の名前を入力してください"
+      newErrors.name = "薬の名前を入力してください";
     }
     if (!formData.time) {
-      newErrors.time = "服用時間を選択してください"
+      newErrors.time = "服用時間を選択してください";
     }
     if (!formData.start_date) {
-      newErrors.start_date = "開始日を選択してください"
+      newErrors.start_date = "開始日を選択してください";
     }
 
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!validateForm()) {
-      return
+      return;
     }
 
     try {
@@ -79,15 +81,15 @@ export const Add = () => {
           startDate: new Date(formData.start_date),
         },
         customItems: formData.customItems.length > 0 ? formData.customItems : undefined,
-      })
+      });
 
       // 成功後は薬一覧ページへリダイレクト
-      navigate({ to: "/medicine" as any })
+      navigate({ to: "/medicine" as any });
     } catch (error) {
-      console.error("Failed to create medicine:", error)
+      console.error("Failed to create medicine:", error);
       // エラーハンドリングは必要に応じて追加
     }
-  }
+  };
 
   const addCustomItem = () => {
     setFormData((prev) => ({
@@ -100,24 +102,28 @@ export const Add = () => {
           isRequired: false,
         },
       ],
-    }))
-  }
+    }));
+  };
 
   const removeCustomItem = (index: number) => {
     setFormData((prev) => ({
       ...prev,
       customItems: prev.customItems.filter((_, i) => i !== index),
-    }))
-  }
+    }));
+  };
 
-  const updateCustomItem = (index: number, field: keyof CustomItemForm, value: string | boolean) => {
+  const updateCustomItem = (
+    index: number,
+    field: keyof CustomItemForm,
+    value: string | boolean
+  ) => {
     setFormData((prev) => ({
       ...prev,
       customItems: prev.customItems.map((item, i) =>
         i === index ? { ...item, [field]: value } : item
       ),
-    }))
-  }
+    }));
+  };
 
   return (
     <>
@@ -204,7 +210,9 @@ export const Add = () => {
           {/* Custom Items */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <label className="text-sm font-medium text-foreground">カスタム記録項目（任意）</label>
+              <label className="text-sm font-medium text-foreground">
+                カスタム記録項目（任意）
+              </label>
               <Button
                 type="button"
                 onClick={addCustomItem}
@@ -234,7 +242,9 @@ export const Add = () => {
                       <label className="text-xs text-muted-foreground">データ型</label>
                       <select
                         value={item.dataType}
-                        onChange={(e) => updateCustomItem(index, "dataType", e.target.value as CustomItemDataType)}
+                        onChange={(e) =>
+                          updateCustomItem(index, "dataType", e.target.value as CustomItemDataType)
+                        }
                         className="w-full px-3 py-2 bg-card border-2 border-border rounded-lg text-foreground focus:outline-none focus:border-primary transition-colors mt-1"
                       >
                         <option value="BOOL">はい/いいえ</option>
@@ -251,7 +261,10 @@ export const Add = () => {
                         onChange={(e) => updateCustomItem(index, "isRequired", e.target.checked)}
                         className="w-4 h-4"
                       />
-                      <label htmlFor={`required-${index}`} className="text-xs text-muted-foreground">
+                      <label
+                        htmlFor={`required-${index}`}
+                        className="text-xs text-muted-foreground"
+                      >
                         必須項目
                       </label>
                     </div>
@@ -281,8 +294,7 @@ export const Add = () => {
             </Button>
           </div>
         </form>
-
       </div>
     </>
-  )
-}
+  );
+};

@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
+import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { medicine } from "./medicine";
 
 /**
@@ -15,4 +15,3 @@ export const customItem = sqliteTable("custom_item", {
 
 export type CustomItem = typeof customItem.$inferSelect;
 export type NewCustomItem = typeof customItem.$inferInsert;
-

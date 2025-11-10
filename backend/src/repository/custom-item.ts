@@ -1,8 +1,8 @@
+import { and, eq, isNull, or } from "drizzle-orm";
+import type { DatabaseType } from "../db";
 import { customItem, medicine } from "../db/schema";
 import type { NewCustomItem } from "../db/schema/customItem";
 import type { PaginationOptions } from "../types/pagination";
-import { eq, and, isNull, or } from "drizzle-orm";
-import type { DatabaseType } from "../db";
 
 /**
  * CustomItem Repository
@@ -27,12 +27,7 @@ export const customItemRepository = {
       })
       .from(customItem)
       .leftJoin(medicine, eq(customItem.medicineId, medicine.medicineId))
-      .where(
-        or(
-          eq(medicine.userId, userId),
-          isNull(customItem.medicineId)
-        )
-      )
+      .where(or(eq(medicine.userId, userId), isNull(customItem.medicineId)))
       .limit(pagination?.limit ?? 100)
       .offset(pagination?.offset ?? 0);
 
@@ -47,7 +42,12 @@ export const customItemRepository = {
    * @param pagination ページネーションオプション
    * @returns カスタム項目の配列
    */
-  async findByMedicineId(db: DatabaseType, userId: string, medicineId: number, pagination?: PaginationOptions) {
+  async findByMedicineId(
+    db: DatabaseType,
+    userId: string,
+    medicineId: number,
+    pagination?: PaginationOptions
+  ) {
     const result = await db
       .select({
         customItemId: customItem.customItemId,
@@ -58,12 +58,7 @@ export const customItemRepository = {
       })
       .from(customItem)
       .innerJoin(medicine, eq(customItem.medicineId, medicine.medicineId))
-      .where(
-        and(
-          eq(medicine.userId, userId),
-          eq(customItem.medicineId, medicineId)
-        )
-      )
+      .where(and(eq(medicine.userId, userId), eq(customItem.medicineId, medicineId)))
       .limit(pagination?.limit ?? 100)
       .offset(pagination?.offset ?? 0);
 
@@ -91,10 +86,7 @@ export const customItemRepository = {
       .where(
         and(
           eq(customItem.customItemId, customItemId),
-          or(
-            eq(medicine.userId, userId),
-            isNull(customItem.medicineId)
-          )
+          or(eq(medicine.userId, userId), isNull(customItem.medicineId))
         )
       )
       .limit(1);

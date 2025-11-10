@@ -1,10 +1,10 @@
 import { Hono } from "hono";
-import { logger } from "hono/logger";
 import { cors } from "hono/cors";
+import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
-import routes from "./routes";
 import { auth } from "./lib/auth";
 import { errorHandler } from "./middleware";
+import routes from "./routes";
 
 const app = new Hono();
 
@@ -49,4 +49,3 @@ export default {
 };
 
 console.log(`🚀 Server is running on http://localhost:${port}`);
-

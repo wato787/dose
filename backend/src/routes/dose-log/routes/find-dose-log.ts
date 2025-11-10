@@ -23,4 +23,3 @@ router.get("/:id", async (c) => {
 });
 
 export default router;
-

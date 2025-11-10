@@ -1,17 +1,17 @@
-import { Card } from "@/components/ui/card"
+import { Card } from "@/components/ui/card";
 
 interface CustomItem {
-  custom_item_id: number
-  medicine_id: number
-  item_name: string
-  data_type: string
-  is_required: boolean
+  custom_item_id: number;
+  medicine_id: number;
+  item_name: string;
+  data_type: string;
+  is_required: boolean;
 }
 
 interface CustomItemProps {
-  item: CustomItem
-  isChecked: boolean
-  onToggle: () => void
+  item: CustomItem;
+  isChecked: boolean;
+  onToggle: () => void;
 }
 
 export const CustomItem = ({ item, isChecked, onToggle }: CustomItemProps) => {
@@ -24,7 +24,12 @@ export const CustomItem = ({ item, isChecked, onToggle }: CustomItemProps) => {
     >
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2 flex-1">
-          <svg className="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg
+            className="w-4 h-4 text-accent"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -46,13 +51,16 @@ export const CustomItem = ({ item, isChecked, onToggle }: CustomItemProps) => {
               stroke="currentColor"
               viewBox="0 0 24 24"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={3}
+                d="M5 13l4 4L19 7"
+              />
             </svg>
           )}
         </div>
       </div>
     </Card>
-  )
-}
-
-
+  );
+};

@@ -1,2 +1,1 @@
-export { Medicine } from "./Medicine"
-
+export { Medicine } from "./Medicine";

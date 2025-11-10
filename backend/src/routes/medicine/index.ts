@@ -1,11 +1,11 @@
 import { Hono } from "hono";
 import { authMiddleware } from "../../middleware";
-import findMedicinesRouter from "./routes/find-medicines";
-import findMedicineRouter from "./routes/find-medicine";
 import createMedicineRouter from "./routes/create-medicine";
-import updateMedicineRouter from "./routes/update-medicine";
-import deleteMedicineRouter from "./routes/delete-medicine";
 import customLogsRouter from "./routes/custom-logs";
+import deleteMedicineRouter from "./routes/delete-medicine";
+import findMedicineRouter from "./routes/find-medicine";
+import findMedicinesRouter from "./routes/find-medicines";
+import updateMedicineRouter from "./routes/update-medicine";
 
 const router = new Hono();
 

@@ -1,4 +1,4 @@
-import { MiddlewareHandler } from "hono";
+import type { MiddlewareHandler } from "hono";
 import { auth } from "../lib/auth";
 
 /**
@@ -24,4 +24,3 @@ export const authMiddleware: MiddlewareHandler = async (c, next) => {
     return c.json({ error: "Internal server error" }, 500);
   }
 };
-

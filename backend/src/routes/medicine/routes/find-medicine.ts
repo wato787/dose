@@ -1,9 +1,9 @@
 import { Hono } from "hono";
 import { db } from "../../../db";
-import { medicineRepository } from "../../../repository/medicine";
-import { scheduleRepository } from "../../../repository/schedule";
 import { customItemRepository } from "../../../repository/custom-item";
 import { customLogRepository } from "../../../repository/custom-log";
+import { medicineRepository } from "../../../repository/medicine";
+import { scheduleRepository } from "../../../repository/schedule";
 import { BadRequestException, NotFoundException } from "../../../utils/http-exception";
 import { ok } from "../../../utils/response";
 
@@ -27,7 +27,11 @@ router.get("/:id", async (c) => {
 
   const customItemsWithLogs = await Promise.all(
     customItems.map(async (item) => {
-      const customLogs = await customLogRepository.findByCustomItemId(db, userId, item.customItemId);
+      const customLogs = await customLogRepository.findByCustomItemId(
+        db,
+        userId,
+        item.customItemId
+      );
       return {
         ...item,
         customLogs,

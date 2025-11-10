@@ -1,7 +1,7 @@
-import { TodayProgress } from "./TodayProgress"
-import { ScheduleTime } from "./ScheduleTime"
-import { DoseRecord } from "./DoseRecord"
-import { CustomItems } from "./CustomItems"
+import { CustomItems } from "./CustomItems";
+import { DoseRecord } from "./DoseRecord";
+import { ScheduleTime } from "./ScheduleTime";
+import { TodayProgress } from "./TodayProgress";
 
 export const Home = () => {
   return (
@@ -17,5 +17,5 @@ export const Home = () => {
         </div>
       </section>
     </>
-  )
-}
+  );
+};
